@@ -133,7 +133,7 @@ export const servicesDetail = [
     ],
     longDesc: `Your retail fit-out is a significant investment and we want it to look and perform at its best for years to come. Our maintenance and support team provides scheduled servicing, reactive repairs, and periodic refurbishment to keep your space looking fresh and functioning perfectly.\n\nWe offer tailored maintenance contracts for single stores and multi-site retailers, with guaranteed response times and 24/7 emergency support. When something goes wrong, we're there fast.`,
     images: [
-      '/PHOTOS/mazzone/Mazzone 1.png',
+      '/PHOTOS/mazzone/IMG-0471 (1)-gigapixel-standard-scale-6_00x.jpg',
       '/PHOTOS/Laloma HR/LLMAtville081212_045.jpg',
       '/Maintenance/MJkotara09_006.jpg',
       '/Maintenance/meat_cellar_2 (1).jpg',
