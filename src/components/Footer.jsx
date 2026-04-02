@@ -2,13 +2,14 @@ import { Facebook, Instagram, Linkedin, ArrowRight, Phone, Mail, MapPin } from '
 
 const navLinks = ['Home', 'About', 'Services', 'Industries', 'Process', 'Portfolio', 'Contact'];
 
+// ✅ FIXED: added slug
 const serviceLinks = [
-  'Design & Planning',
-  'Interior Fit-Out',
-  'Custom Joinery',
-  'Lighting Solutions',
-  'Project Management',
-  'Maintenance',
+  { name: 'Design & Planning', slug: 'design-planning' },
+  { name: 'Interior Fit-Out', slug: 'interior-fit-out' },
+  { name: 'Custom Joinery', slug: 'custom-joinery' },
+  { name: 'Lighting Solutions', slug: 'lighting-solutions' },
+  { name: 'Project Management', slug: 'project-management' },
+  { name: 'Maintenance', slug: 'maintenance-support' },
 ];
 
 export default function Footer() {
@@ -73,13 +74,13 @@ export default function Footer() {
 
             <ul className="space-y-3">
               {serviceLinks.map((s) => (
-                <li key={s}>
+                <li key={s.slug}>
                   <a
-                    href="/#services"
+                    href={`/services/${s.slug}`}
                     className="flex items-center gap-2 text-white/90 hover:text-white transition"
                   >
                     <ArrowRight className="w-4 h-4" />
-                    {s}
+                    {s.name}
                   </a>
                 </li>
               ))}
