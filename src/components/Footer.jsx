@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Linkedin, ArrowRight, Phone, Mail, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom'; // ✅ ADDED
 
 const navLinks = ['Home', 'About', 'Services', 'Industries', 'Process', 'Portfolio', 'Contact'];
 
@@ -75,13 +76,13 @@ export default function Footer() {
             <ul className="space-y-3">
               {serviceLinks.map((s) => (
                 <li key={s.slug}>
-                  <a
-                    href={`/services/${s.slug}`}
+                  <Link
+                    to={`/services/${s.slug}`}   // ✅ FIXED
                     className="flex items-center gap-2 text-white/90 hover:text-white transition"
                   >
                     <ArrowRight className="w-4 h-4" />
                     {s.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
