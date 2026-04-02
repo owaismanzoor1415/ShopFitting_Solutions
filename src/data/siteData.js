@@ -1,60 +1,60 @@
   export const heroSlides = [
    {
-    img: 'public/PHOTOS/Laloma HR/LLMAtville081212_029.jpg' ,
+    img: '/PHOTOS/Laloma HR/LLMAtville081212_029.jpg' ,
     title: 'Loloma Jewellers Design',
   },
   {
-    img: 'public/PHOTOS/JEWELL PACK/sec cherms/Secrets_Cherm0917_047.jpg' ,
+    img: '/PHOTOS/JEWELL PACK/sec cherms/Secrets_Cherm0917_047.jpg' ,
     title: 'SECRETS Shhh Design',
   },
   {
-    img: 'public/Project/_K0A1235.jpg' ,
+    img: '/Project/_K0A1235.jpg' ,
     title: 'PTC Phone Store technical fit-out',
   },
   {
-    img: 'public/PHOTOS/Crown Jewellers 131117/Crown_131117_010.jpg',
+    img: '/PHOTOS/Crown Jewellers 131117/Crown_131117_010.jpg',
     title: 'Crown Family Jewellers',
   },
   {
-    img: 'public/PHOTOS/Diamonds international/DI_ch_018.jpg',
+    img: '/PHOTOS/Diamonds international/DI_ch_018.jpg',
     title: 'Diamond Jewellery Store',
   },
 
   {
-    img: 'public/PHOTOS/PRINCESS NAILS 1/Princess_Nails_290519_0484.jpg',
+    img: '/PHOTOS/PRINCESS NAILS 1/Princess_Nails_290519_0484.jpg',
     title: 'Princess Nails and Spa',
   },
 
   {
-    img: 'public/Interior/Coco_Bliss1216_005.jpg',
+    img: '/Interior/Coco_Bliss1216_005.jpg',
     title: 'Coco Bliss Store Fit-Out',
   },
   {
-    img: 'public/PHOTOS/Famous SHoes/Famous_PF_0616_0062.jpg' ,
+    img: '/PHOTOS/Famous SHoes/Famous_PF_0616_0062.jpg' ,
     title: 'Famous Footwear Shop Design',
   },
   {
-    img: 'public/PHOTOS/NATHANS DIAMONDS PHOTOS/6.jpg' ,
+    img: '/PHOTOS/NATHANS DIAMONDS PHOTOS/6.jpg' ,
     title: 'Nathan Jewellery Lighting Design',
   },
   {
-    img: 'public/Maintenance/MJkotara09_006.jpg',
+    img: '/Maintenance/MJkotara09_006.jpg',
     title: 'Metthews Jewellers Maintenance',
   },
   {
-    img: 'public/PHOTOS/Pillow Talk/PillowTalk_PF_0616_0095.jpg',
+    img: '/PHOTOS/Pillow Talk/PillowTalk_PF_0616_0095.jpg',
     title: 'Pillow Talk Interior',
   },
   {
-    img: 'public/PHOTOS/IDS_ Sea Feul_1216 (1)/SeaFuel_1216_022.jpg',
+    img: '/PHOTOS/IDS_ Sea Feul_1216 (1)/SeaFuel_1216_022.jpg',
     title: 'Sea Fuel Restaurant design',
   },
   {
-    img: 'public/PHOTOS/TOOMBUL B/TYoombul_Beauty_290519_0567.jpg' ,
+    img: '/PHOTOS/TOOMBUL B/TYoombul_Beauty_290519_0567.jpg' ,
     title: 'Toombul Skin and Beauty',
   },
   {
-    img: 'public/PHOTOS/meat cellar/meat cellar 2- BLUE TEAM_7 - Photo (1).jpg' ,
+    img: '/PHOTOS/meat cellar/meat cellar 2- BLUE TEAM_7 - Photo (1).jpg' ,
     title: 'Meat Cellar Interior Design',
   },
 
