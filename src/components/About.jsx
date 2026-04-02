@@ -8,22 +8,22 @@ export default function About() {
   {
     title: "Premium Retail Design",
     text: "We specialize in designing premium retail environments that enhance customer experience and maximize product visibility.Our shopfitting solutions combine aesthetics with functionality to create visually stunning and practical spaces.",
-    image: "public/AboutImages/PTC_GC_160418_003.jpg",
+    image: "/AboutImages/PTC_GC_160418_003.jpg",
   },
   {
     title: "Smart Space Planning",
     text: "Our team focuses on intelligent space planning to ensure efficient layouts that improve customer flow and product accessibility.Every design is optimized for both performance and visual appeal.",
-    image: "public/AboutImages/Famous_PF_0616_0054.jpg",
+    image: "/AboutImages/Famous_PF_0616_0054.jpg",
   },
   {
     title: "Custom Fit-Out Solutions",
     text: "We deliver custom fit-out solutions tailored to your business needs, whether it's retail stores, kiosks, or commercial spaces.Each project is crafted with precision and attention to detail.",
-    image: "public/AboutImages/ID_DL_0624_0104.jpg",
+    image: "/AboutImages/ID_DL_0624_0104.jpg",
   },
   {
     title: "Execution & Quality Delivery",
     text: "From concept to completion, we ensure high-quality execution using skilled professionals and modern construction techniques.We are committed to delivering projects on time without compromising quality.",
-    image: "public/AboutImages/SeaFuel_1216_075.jpg",
+    image: "/AboutImages/SeaFuel_1216_075.jpg",
     isLast: true,
   },
 ];
