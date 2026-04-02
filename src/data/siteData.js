@@ -8,7 +8,7 @@
     title: 'SECRETS Shhh Design',
   },
   {
-    img: '/Project/_K0A1235.jpg' ,
+    img: 'public/Project/_K0A1235.jpg' ,
     title: 'PTC Phone Store technical fit-out',
   },
   {
@@ -26,7 +26,7 @@
   },
 
   {
-    img: '/Interior/Coco_Bliss1216_005.jpg',
+    img: 'public/Interior/Coco_Bliss1216_005.jpg',
     title: 'Coco Bliss Store Fit-Out',
   },
   {
@@ -38,11 +38,11 @@
     title: 'Nathan Jewellery Lighting Design',
   },
   {
-    img: '/Maintenance/MJkotara09_006.jpg',
+    img: 'public/Maintenance/MJkotara09_006.jpg',
     title: 'Metthews Jewellers Maintenance',
   },
   {
-    img: '/PHOTOS/Pillow Talk/PillowTalk_PF_0616_0095.jpg',
+    img: 'public/PHOTOS/Pillow Talk/PillowTalk_PF_0616_0095.jpg',
     title: 'Pillow Talk Interior',
   },
   {
