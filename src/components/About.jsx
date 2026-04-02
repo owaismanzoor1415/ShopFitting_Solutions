@@ -31,32 +31,31 @@ export default function About() {
   return (
     <section id="about" className="bg-white">
 
-      {/* 🔥 HERO (CLEAN WHITE / GREY SINGLE FLOW) */}
-<div className="relative py-24 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white">
+      {/* 🔥 HERO */}
+      <div className="relative py-24 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white">
 
-  <motion.h1
-    initial={{ opacity: 0, y: 40 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-3xl md:text-5xl font-bold tracking-wide text-gray-900"
-  >
-    ABOUT <span className="text-orange-500">SHOPFITTING SOLUTIONS</span>
-  </motion.h1>
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-3xl md:text-5xl font-bold tracking-wide text-gray-900"
+        >
+          ABOUT <span className="text-orange-500">SHOPFITTING SOLUTIONS</span>
+        </motion.h1>
 
-  {/* Line */}
-  <div className="w-20 h-1 bg-orange-500 mx-auto mt-6"></div>
+        <div className="w-20 h-1 bg-orange-500 mx-auto mt-6"></div>
 
-  <motion.p
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 1 }}
-    className="text-gray-600 max-w-3xl mx-auto mt-6 text-lg leading-relaxed"
-  >
-    We create premium retail environments that combine design, functionality, and quality execution. 
-    Our goal is to transform commercial spaces into modern, efficient, and visually engaging experiences.
-  </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-gray-600 max-w-3xl mx-auto mt-6 text-lg leading-relaxed"
+        >
+          We create premium retail environments that combine design, functionality, and quality execution. 
+          Our goal is to transform commercial spaces into modern, efficient, and visually engaging experiences.
+        </motion.p>
 
-</div>
+      </div>
 
       {/* 🔥 SECTIONS */}
       {sections.map((section, index) => (
@@ -72,11 +71,11 @@ export default function About() {
               index % 2 !== 0 ? "md:order-2" : ""
             }`}
           >
-            {/* IMAGE */}
             {section.image ? (
               <img
                 src={section.image}
                 alt={section.title}
+                loading="lazy"   // ✅ FIX ADDED
                 className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
               />
             ) : (
@@ -103,7 +102,6 @@ export default function About() {
                 {section.text}
               </p>
 
-              {/* 🔥 LAST SECTION CTA */}
               {section.isLast && (
                 <>
                   <ul className="text-gray-700 mb-6 space-y-0">
@@ -114,12 +112,12 @@ export default function About() {
                   </ul>
 
                   <a
-            href="#contact"
-            onClick={() => setMenuOpen(false)}
-            className="border border-gray-400 px-6 py-2 text-sm tracking-wide hover:bg-orange-500 hover:text-white transition hover:scale-105"
-          >
-            CONTACT SHOPFITTING SOLUTIONS
-          </a>
+                    href="#contact"
+                    onClick={() => setMenuOpen(false)}
+                    className="border border-gray-400 px-6 py-2 text-sm tracking-wide hover:bg-orange-500 hover:text-white transition hover:scale-105"
+                  >
+                    CONTACT SHOPFITTING SOLUTIONS
+                  </a>
                 </>
               )}
             </div>
