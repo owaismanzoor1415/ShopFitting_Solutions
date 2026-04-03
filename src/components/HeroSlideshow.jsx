@@ -7,35 +7,36 @@ export default function HeroSlideshow() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length);
-    }, 4000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden">
+    <section className="relative w-full bg-black overflow-hidden">
 
-      {/* 🔥 SLIDES */}
-      {heroSlides.map((slide, i) => (
-        <div
-          key={i}
-          className={`absolute inset-0 transition-all duration-[1500ms] ${
-            i === current ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
-          }`}
-        >
+      {/* 🔥 MOBILE + DESKTOP HEIGHT */}
+      <div className="w-full h-auto md:h-[100vh] flex justify-center items-center">
+
+        {heroSlides.map((slide, i) => (
           <img
+            key={i}
             src={slide.img}
-            alt=""
-            className="w-full h-full object-cover object-top"
+            alt={slide.title}
+            className={`
+              transition-opacity duration-1000
+              ${i === current ? 'opacity-100' : 'opacity-0 absolute'}
+
+              /* MOBILE */
+              w-full h-auto object-cover
+
+              /* DESKTOP */
+              md:absolute md:inset-0 md:w-full md:h-full md:object-cover
+            `}
           />
-        </div>
-      ))}
+        ))}
 
-      {/* 🔥 DARK OVERLAY (PREMIUM LOOK) */}
-      <div className="absolute inset-0 bg-black/50"></div>
-
-      {/* 🔥 OPTIONAL ORANGE LIGHT (BRANDING) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-orange-500/30"></div>
+      </div>
 
     </section>
   );

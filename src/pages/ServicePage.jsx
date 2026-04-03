@@ -455,17 +455,17 @@ export default function ServicePage() {
 </div>
           )}
 
-          <div style={{ padding: isMobile ? '0 20px' : '0', marginBottom: '44px' }}>
+          <div style={{ padding: isMobile ? '0' : '0', marginBottom: '44px' }}>
             <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? '20px' : '24px', fontWeight: 800, color: DARK, marginBottom: '8px' }}>Project Gallery</h2>
             <div style={{ width: '36px', height: '3px', background: ORANGE, marginBottom: '20px', borderRadius: '2px' }} />
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '2px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '2px' }}>
               {service.images.map((img, i) => (
                 <div key={i} 
                 className="gallery-item"
                 onClick={() => setPopupImg(img)}
                   style={{ overflow: 'hidden', borderRadius: '5px', cursor: 'pointer', border: `2px solid ${i === activeImg ? ORANGE : 'transparent'}`, transition: 'border-color 0.2s' }}>
                   <img src={img} alt={`Project ${i + 1}`}
-                    style={{ width: '100%', height: isMobile ? '110px' : '175px', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
+                    style={{ width: '100%', height: isMobile ? '240px' : '260px', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
                     onMouseEnter={e => e.target.style.transform = 'scale(1.07)'}
                     onMouseLeave={e => e.target.style.transform = 'scale(1)'}
                   />

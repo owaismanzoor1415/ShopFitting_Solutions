@@ -22,7 +22,7 @@ export default function Navbar() {
           {/* 🔥 LOGO */}
           <HashLink smooth to="/#home" className="flex items-center gap-2 max-w-[70%]">
             <img
-              src="/logo.png"
+              src="/logo.webp"
               alt="Shop Fitting Solutions"
               className="w-12 h-12 object-contain"
             />

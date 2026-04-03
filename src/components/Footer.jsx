@@ -23,7 +23,7 @@ export default function Footer() {
           {/* 🔥 COMPANY */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <img src="/logo.png" alt="logo" className="w-10 h-10" />
+              <img src="/logo.webp" alt="logo" className="w-10 h-10" />
 
               <div>
                 <h3 className="font-bold text-lg">ShopFitting Solutions</h3>
@@ -38,17 +38,23 @@ export default function Footer() {
 
             {/* SOCIAL */}
             <div className="flex gap-3">
-              {[Facebook, Instagram, Linkedin].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition"
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
-          </div>
+  {[
+    { Icon: Facebook, link: "https://facebook.com/your-page" },
+    { Icon: Instagram, link: "https://instagram.com/your-profile" },
+    { Icon: Linkedin, link: "https://linkedin.com/in/your-profile" },
+  ].map(({ Icon, link }, i) => (
+    <a
+      key={i}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition"
+    >
+      <Icon className="w-5 h-5" />
+    </a>
+  ))}
+</div>
+</div>
 
           {/* 🔥 NAV LINKS (MATCH NAVBAR) */}
           <div>
