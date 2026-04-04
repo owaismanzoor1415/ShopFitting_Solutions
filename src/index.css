@@ -4,7 +4,7 @@
 
 /* ===== GLOBAL RESET ===== */
 html, body {
-  overscroll-behavior: none;
+  scroll-behavior: auto;
 }
 
 * {

@@ -2,6 +2,7 @@ import './index.css';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ScrollToTop from "./components/ScrollToTop";
 import { useEffect } from 'react';
+import Lenis from '@studio-freight/lenis';
 import { useScrollReveal } from './hooks/useScrollReveal';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -15,65 +16,87 @@ import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+
 import ServicePage from './pages/ServicePage';
 import PortfolioPage from './pages/PortfolioPage';
 
+// ✅ HomePage Component
 function HomePage() {
-  useScrollReveal();
-  const location = useLocation();
+useScrollReveal();
+const location = useLocation();
 
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace('#', '');
+useEffect(() => {
+if (location.hash) {
+const id = location.hash.replace('#', '');
 
-      const scrollToElement = () => {
-        const el = document.getElementById(id);
-        if (el) {
-          const yOffset = -80;
-          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        } else {
-          setTimeout(scrollToElement, 100);
-        }
-      };
+  const scrollToElement = () => {
+    const el = document.getElementById(id);
+    if (el) {
+      const yOffset = -80;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-      scrollToElement();
+      // ✅ Use Lenis instead of default smooth scroll
+      if (window.lenis) {
+        window.lenis.scrollTo(y);
+      } else {
+        window.scrollTo({ top: y });
+      }
+
+    } else {
+      setTimeout(scrollToElement, 100);
     }
-  }, [location]);
+  };
 
-  return (
-    <>
-      <ProjectsCarousel />
-      <Hero />
-      <About />
-      <Services />
-      <Industries />
-      <Process />
-      <Portfolio />
-      <Testimonials />
-      <CTA />
-      <Contact />
-    </>
-  );
+  scrollToElement();
 }
 
+}, [location]);
+
+return (
+<> <ProjectsCarousel /> <Hero /> <About /> <Services /> <Industries /> <Process /> <Portfolio /> <Testimonials /> <CTA /> <Contact />
+</>
+);
+}
+
+// ✅ App Component with Lenis
 export default function App() {
-  return (
-    <BrowserRouter>
-      <ScrollToTop /> 
-      {/* ✅ GLOBAL NAVBAR */}
-      <Navbar />
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/services/:slug" element={<ServicePage />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/portfolio/:slug" element={<PortfolioPage />} />
-      </Routes>
+useEffect(() => {
+const lenis = new Lenis({
+duration: 1.2,
+easing: (t) => 1 - Math.pow(1 - t, 3),
+smoothWheel: true,
+smoothTouch: false,
+});
 
-      {/* ✅ GLOBAL FOOTER (IMPORTANT FIX) */}
-      <Footer />
+// ✅ Make Lenis global
+window.lenis = lenis;
 
-    </BrowserRouter>
-  );
+function raf(time) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);
+
+return () => {
+  lenis.destroy();
+};
+
+}, []);
+
+return ( <BrowserRouter> <ScrollToTop /> <Navbar />
+
+```
+  <Routes>
+    <Route path="/" element={<HomePage />} />
+    <Route path="/services/:slug" element={<ServicePage />} />
+    <Route path="/services" element={<Services />} />
+    <Route path="/portfolio/:slug" element={<PortfolioPage />} />
+  </Routes>
+
+  <Footer />
+</BrowserRouter>
+
+);
 }
