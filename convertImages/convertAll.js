@@ -2,44 +2,38 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
-const baseFolder = './public';
+const baseFolder = './public/AboutImages';
 
-async function convertImages(folderPath) {
+async function compressImages(folderPath) {
   const files = fs.readdirSync(folderPath);
 
   for (const file of files) {
     const fullPath = path.join(folderPath, file);
 
     if (fs.lstatSync(fullPath).isDirectory()) {
-      await convertImages(fullPath);
+      await compressImages(fullPath);
     } else {
       const ext = path.extname(file).toLowerCase();
 
-      if (['.webp', '.webp', '.webp'].includes(ext)) {
-        const outputPath = path.join(
-          folderPath,
-          path.parse(file).name + '.webp'
-        );
-
+      // ✅ Skip already compressed files
+      if (ext === '.webp' && !file.includes('-compressed')) {
         try {
-          if (fs.existsSync(outputPath)) {
-            console.log(`⏭ Skipped: ${file}`);
-            continue;
-          }
+          const buffer = await sharp(fullPath)
+            .resize(1200)
+            .webp({ quality: 50 })
+            .toBuffer();
 
-          await sharp(fullPath)
-            .webp({ quality: 80 })
-            .toFile(outputPath);
+          fs.writeFileSync(fullPath, buffer);
 
-          console.log(`✅ Converted: ${fullPath}`);
+          console.log(`✅ Compressed: ${file}`);
         } catch (err) {
-          console.error(`❌ FAILED: ${fullPath}`);
+          console.error(`❌ FAILED: ${file}`, err.message);
         }
       }
     }
   }
 }
 
-convertImages(baseFolder).then(() => {
-  console.log("🎉 ALL DONE");
+compressImages(baseFolder).then(() => {
+  console.log("🎉 DONE");
 });

@@ -26,30 +26,30 @@ useScrollReveal();
 const location = useLocation();
 
 useEffect(() => {
-if (location.hash) {
-const id = location.hash.replace('#', '');
+  // ❌ Ignore scroll on page refresh
+  if (performance.navigation.type === 1) return;
 
-  const scrollToElement = () => {
-    const el = document.getElementById(id);
-    if (el) {
-      const yOffset = -80;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+  if (location.hash) {
+    const id = location.hash.replace('#', '');
 
-      // ✅ Use Lenis instead of default smooth scroll
-      if (window.lenis) {
-        window.lenis.scrollTo(y);
+    const scrollToElement = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        const yOffset = -80;
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        if (window.lenis) {
+          window.lenis.scrollTo(y);
+        } else {
+          window.scrollTo({ top: y });
+        }
       } else {
-        window.scrollTo({ top: y });
+        setTimeout(scrollToElement, 100);
       }
+    };
 
-    } else {
-      setTimeout(scrollToElement, 100);
-    }
-  };
-
-  scrollToElement();
-}
-
+    scrollToElement();
+  }
 }, [location]);
 
 return (
