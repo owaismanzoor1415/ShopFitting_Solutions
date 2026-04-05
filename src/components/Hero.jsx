@@ -84,12 +84,36 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
+    // FIX 1: Check immediately on mount if stats bar is already visible
+    // (handles mobile where the bar may be in the initial viewport or close to it)
+    const checkInitialVisibility = () => {
+      if (statsRef.current) {
+        const rect = statsRef.current.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          setStatsVisible(true);
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // Try immediately
+    if (checkInitialVisibility()) return;
+
+    // Also try after a short delay (after fonts/layout settle)
+    const initTimer = setTimeout(() => {
+      if (checkInitialVisibility()) return;
+    }, 400);
+
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.3 }
+      { threshold: 0.1 } // lowered from 0.3 so it triggers earlier on small screens
     );
     if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(initTimer);
+      observer.disconnect();
+    };
   }, []);
 
   const ready = phase >= 1;
@@ -152,6 +176,26 @@ export default function Hero() {
         .play-btn:hover { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234,88,12,0.1); }
 
         * { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+        /* FIX 2: Project cards — show on mobile (below lg) as a horizontal scroll row */
+        .project-cards-mobile {
+          display: flex;
+          overflow-x: auto;
+          gap: 12px;
+          padding: 0 1.5rem 1rem;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          margin-top: 24px;
+        }
+        .project-cards-mobile::-webkit-scrollbar { display: none; }
+        .project-cards-mobile .project-card-item {
+          flex-shrink: 0;
+        }
+
+        /* Hide mobile cards on xl and above (desktop uses absolute positioned ones) */
+        @media (min-width: 1280px) {
+          .project-cards-mobile { display: none; }
+        }
       `}</style>
 
       {/* ── BACKGROUND SYSTEM ── */}
@@ -282,7 +326,7 @@ export default function Hero() {
         }} />
       </div>
 
-      {/* ── RIGHT SIDE PANEL — project showcase ── */}
+      {/* ── RIGHT SIDE PANEL — project showcase (desktop xl only, absolute) ── */}
       <div className="absolute z-10 hidden xl:block" style={{
         right: 0,
         top: 0,
@@ -627,6 +671,75 @@ export default function Hero() {
             </div>
 
           </div>
+
+          {/* ── MOBILE PROJECT CARDS (visible on < xl screens, horizontal scroll) ── */}
+          <div
+            className="project-cards-mobile"
+            style={{
+              opacity: ready ? 1 : 0,
+              transition: 'opacity 0.6s ease 1s',
+            }}
+          >
+            {[
+              { label: 'Luxury Retail', sub: 'Mayfair, London' },
+              { label: 'Fashion Boutique', sub: 'Knightsbridge' },
+              { label: 'Flagship Store', sub: 'Manchester' },
+            ].map((card) => (
+              <div key={card.label} className="project-card-item">
+                <div style={{
+                  background: 'rgba(255,255,255,0.9)',
+                  border: '1px solid rgba(0,0,0,0.07)',
+                  backdropFilter: 'blur(12px)',
+                  borderRadius: 4,
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  minWidth: 200,
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+                }}>
+                  <div style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 3,
+                    background: 'linear-gradient(135deg, rgba(234,88,12,0.15), rgba(180,60,0,0.1))',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#EA580C' }} />
+                  </div>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontSize: '0.75rem',
+                      color: 'rgba(20,20,20,0.85)',
+                      fontWeight: 600,
+                      letterSpacing: '0.02em',
+                    }}>{card.label}</div>
+                    <div style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontSize: '0.62rem',
+                      color: 'rgba(0,0,0,0.35)',
+                      marginTop: 2,
+                      letterSpacing: '0.06em',
+                    }}>{card.sub}</div>
+                  </div>
+                  <div style={{
+                    marginLeft: 'auto',
+                    width: 5,
+                    height: 5,
+                    borderRadius: '50%',
+                    background: '#22c55e',
+                    boxShadow: '0 0 6px #22c55e',
+                    flexShrink: 0,
+                  }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
 

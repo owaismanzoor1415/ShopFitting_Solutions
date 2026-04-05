@@ -8,75 +8,138 @@ export default function ProjectsCarousel() {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length);
     }, 4000);
-
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative w-full h-screen overflow-hidden z-0 pointer-events-none">
+    <section
+      id="home"
+      style={{
+        position: 'relative',
+        /*
+          FIX 1 — WIDTH:
+          100vw guarantees the section spans the full viewport width.
+          'w-full' can be limited by a parent's width; vw units bypass that entirely.
+        */
+        width: '100vw',
+        left: '50%',
+        right: '50%',
+        marginLeft: '-50vw',
+        marginRight: '-50vw',
 
-      {/* 🔥 SLIDES */}
+        /*
+          FIX 2 — HEIGHT on mobile:
+          100dvh = dynamic viewport height, shrinks when browser chrome
+          (address bar) hides/shows. Thumbnail is ALWAYS visible.
+          Falls back to 100vh on older browsers.
+          We subtract the navbar height (64px = h-16 in your Navbar).
+          Change 64px if your navbar height is different.
+        */
+        height: 'calc(100dvh - 64px)',
+        minHeight: 300,
+        overflow: 'hidden',
+        zIndex: 0,
+        marginTop: '64px', /* push content below the fixed navbar */
+      }}
+    >
+
+      {/* SLIDES */}
       {heroSlides.map((slide, i) => (
         <div
           key={i}
-          className={`absolute inset-0 transition-all duration-[2000ms] ease-in-out ${
-            i === current
-              ? 'opacity-100 scale-100'
-              : 'opacity-0 scale-100'
-          }`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: i === current ? 1 : 0,
+            transition: 'opacity 2000ms ease-in-out',
+          }}
         >
           <img
             src={slide.img}
-            alt=""
-            className="w-full h-full object-cover"
+            alt={slide.title || ''}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              display: 'block',
+            }}
           />
         </div>
       ))}
 
-      {/* 🔥 LIGHT OVERLAY */}
-      <div className="absolute inset-0 bg-black/20"></div>
+      {/* LIGHT OVERLAY */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(0,0,0,0.2)',
+        pointerEvents: 'none',
+      }} />
 
-      {/* 🔥 MOBILE: LEFT TEXT + RIGHT THUMBNAIL */}
-      <div className="absolute bottom-4 left-0 w-full px-4 z-10 flex items-center justify-between sm:hidden pointer-events-auto">
+      {/* BOTTOM BLEND */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: 128,
+        background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.7))',
+        pointerEvents: 'none',
+      }} />
 
-        {/* TEXT */}
-        <p className="text-xs bg-gradient-to-r from-orange-500 via-orange-400 to-orange-600 bg-clip-text text-transparent">
+      {/*
+        BOTTOM BAR — text left, thumbnail right.
+        Uses env(safe-area-inset-bottom) so iPhone home bar never clips it.
+      */}
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingLeft: 'clamp(1rem, 4vw, 2rem)',
+        paddingRight: 'clamp(1rem, 4vw, 2rem)',
+        paddingTop: '1rem',
+        /* Safe area so iPhone home-bar never covers thumbnail */
+        paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))',
+      }}>
+
+        {/* SLIDE TITLE */}
+        <p style={{
+          fontSize: 'clamp(0.7rem, 2.5vw, 0.875rem)',
+          fontWeight: 500,
+          background: 'linear-gradient(to right, #f97316, #fb923c, #ea580c)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          margin: 0,
+          maxWidth: '60%',
+          lineHeight: 1.4,
+        }}>
           {heroSlides[current].title}
         </p>
 
-        {/* SINGLE THUMBNAIL */}
+        {/* THUMBNAIL */}
         <img
           src={heroSlides[current].img}
-          onClick={() => setCurrent((prev) => (prev + 1) % heroSlides.length)}
-          className="w-20 h-12 object-cover cursor-pointer rounded border-2 border-orange-500"
           alt="thumb"
+          onClick={() => setCurrent((prev) => (prev + 1) % heroSlides.length)}
+          style={{
+            width: 'clamp(72px, 15vw, 96px)',
+            height: 'clamp(48px, 10vw, 64px)',
+            objectFit: 'cover',
+            cursor: 'pointer',
+            borderRadius: 6,
+            border: '2px solid #f97316',
+            transition: 'transform 0.3s ease',
+            flexShrink: 0,
+          }}
+          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         />
       </div>
-
-      {/* 🔥 DESKTOP */}
-      <div className="hidden sm:block">
-
-        {/* TEXT (LEFT) */}
-        <div className="absolute bottom-6 left-8 z-10">
-          <p className="text-sm font-medium bg-gradient-to-r from-orange-500 via-orange-400 to-orange-600 bg-clip-text text-transparent">
-            {heroSlides[current].title}
-          </p>
-        </div>
-
-        {/* SINGLE THUMBNAIL (RIGHT) */}
-        <div className="absolute bottom-6 right-8 z-10 pointer-events-auto">
-          <img
-            src={heroSlides[current].img}
-            onClick={() => setCurrent((prev) => (prev + 1) % heroSlides.length)}
-            className="w-24 h-16 object-cover cursor-pointer rounded-md border-2 border-orange-500 transition-all duration-300 hover:scale-105"
-            alt="thumb"
-          />
-        </div>
-
-      </div>
-
-      {/* 🔥 BOTTOM BLEND */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-black/70"></div>
 
     </section>
   );

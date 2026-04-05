@@ -24,8 +24,35 @@ body {
   color: #111827;
 }
 
-/* ❌ REMOVED HERO SLIDESHOW CSS (important)
-   Now controlled completely by Tailwind in HeroSlideshow.jsx */
+/* ===== FIX: Root must have full height so sections can fill the viewport ===== */
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 100%;
+}
+
+/* ===== FIX: Hero slideshow section always fills the visible screen on mobile ===== */
+/* 
+  100dvh = dynamic viewport height — shrinks/grows as mobile browser chrome hides/shows.
+  This ensures the hero image + thumbnail are ALWAYS fully visible without scrolling,
+  on every phone size (iPhone SE, 12, 14 Pro Max, Android, etc.)
+*/
+#home,
+.hero-slideshow-section {
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 300px;
+}
+
+/* Fallback for browsers that don't support dvh */
+@supports not (height: 100dvh) {
+  #home,
+  .hero-slideshow-section {
+    height: 100vh;
+    height: -webkit-fill-available; /* iOS Safari */
+  }
+}
 
 /* ===== HERO CONTROLS (KEEP IF USED ELSEWHERE) ===== */
 .hero-slide-caption {

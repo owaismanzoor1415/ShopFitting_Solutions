@@ -1,39 +1,23 @@
-import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
-const baseFolder = './public/AboutImages';
-
-async function compressImages(folderPath) {
-  const files = fs.readdirSync(folderPath);
-
-  for (const file of files) {
+function rename(folderPath) {
+  for (const file of fs.readdirSync(folderPath)) {
     const fullPath = path.join(folderPath, file);
 
     if (fs.lstatSync(fullPath).isDirectory()) {
-      await compressImages(fullPath);
-    } else {
-      const ext = path.extname(file).toLowerCase();
+      rename(fullPath);
+      continue;
+    }
 
-      // ✅ Skip already compressed files
-      if (ext === '.webp' && !file.includes('-compressed')) {
-        try {
-          const buffer = await sharp(fullPath)
-            .resize(1200)
-            .webp({ quality: 50 })
-            .toBuffer();
-
-          fs.writeFileSync(fullPath, buffer);
-
-          console.log(`✅ Compressed: ${file}`);
-        } catch (err) {
-          console.error(`❌ FAILED: ${file}`, err.message);
-        }
-      }
+    if (file.endsWith('.webp.tmp')) {
+      const newPath = fullPath.replace('.webp.tmp', '.webp');
+      fs.renameSync(fullPath, newPath);
+      console.log(`🔁 Renamed: ${file}`);
     }
   }
 }
 
-compressImages(baseFolder).then(() => {
-  console.log("🎉 DONE");
-});
+rename('../public');
+
+console.log('✅ All files converted to .webp');

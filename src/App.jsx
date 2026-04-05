@@ -22,81 +22,110 @@ import PortfolioPage from './pages/PortfolioPage';
 
 // ✅ HomePage Component
 function HomePage() {
-useScrollReveal();
-const location = useLocation();
+  useScrollReveal();
+  const location = useLocation();
 
-useEffect(() => {
-  // ❌ Ignore scroll on page refresh
-  if (performance.navigation.type === 1) return;
+  useEffect(() => {
+    if (performance.navigation.type === 1) return;
 
-  if (location.hash) {
-    const id = location.hash.replace('#', '');
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
 
-    const scrollToElement = () => {
-      const el = document.getElementById(id);
-      if (el) {
-        const yOffset = -80;
-        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const scrollToElement = () => {
+        const el = document.getElementById(id);
+        if (el) {
+          const yOffset = -80;
+          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
-        if (window.lenis) {
-          window.lenis.scrollTo(y);
+          if (window.lenis) {
+            window.lenis.scrollTo(y);
+          } else {
+            window.scrollTo({ top: y });
+          }
         } else {
-          window.scrollTo({ top: y });
+          setTimeout(scrollToElement, 100);
         }
-      } else {
-        setTimeout(scrollToElement, 100);
-      }
-    };
+      };
 
-    scrollToElement();
-  }
-}, [location]);
+      scrollToElement();
+    }
+  }, [location]);
 
-return (
-<> <ProjectsCarousel /> <Hero /> <About /> <Services /> <Industries /> <Process /> <Portfolio /> <Testimonials /> <CTA /> <Contact />
-</>
-);
+  return (
+    /*
+      FIX: Use a plain fragment with NO wrapper div.
+      Any wrapper div here could add width constraints.
+      Each section component must handle its own full-width layout.
+    */
+    <>
+      <ProjectsCarousel />
+      <Hero />
+      <About />
+      <Services />
+      <Industries />
+      <Process />
+      <Portfolio />
+      <Testimonials />
+      <CTA />
+      <Contact />
+    </>
+  );
 }
 
 // ✅ App Component with Lenis
 export default function App() {
 
-useEffect(() => {
-const lenis = new Lenis({
-duration: 1.2,
-easing: (t) => 1 - Math.pow(1 - t, 3),
-smoothWheel: true,
-smoothTouch: false,
-});
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+      smoothWheel: true,
+      smoothTouch: false,
+    });
 
-// ✅ Make Lenis global
-window.lenis = lenis;
+    window.lenis = lenis;
 
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
-requestAnimationFrame(raf);
+    requestAnimationFrame(raf);
 
-return () => {
-  lenis.destroy();
-};
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
-}, []);
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
 
-return ( <BrowserRouter> <ScrollToTop /> <Navbar />
+      {/*
+        FIX: Navbar must be position:fixed or position:sticky in its own CSS.
+        Do NOT wrap Navbar + Routes in a div — that creates a stacking container
+        that can clip or constrain full-width sections.
+      */}
+      <Navbar />
 
-```
-  <Routes>
-    <Route path="/" element={<HomePage />} />
-    <Route path="/services/:slug" element={<ServicePage />} />
-    <Route path="/services" element={<Services />} />
-    <Route path="/portfolio/:slug" element={<PortfolioPage />} />
-  </Routes>
+      {/*
+        FIX: This div is the ONLY wrapper around page content.
+        - No max-width
+        - No padding / margin
+        - No overflow-hidden (that clips full-bleed sections)
+        width: 100vw ensures it spans the full viewport regardless of
+        any inherited flex/grid context from BrowserRouter internals.
+      */}
+      <div style={{ width: '100%', margin: 0, padding: 0 }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services/:slug" element={<ServicePage />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/portfolio/:slug" element={<PortfolioPage />} />
+        </Routes>
+      </div>
 
-  <Footer />
-</BrowserRouter>
-
-);
+      <Footer />
+    </BrowserRouter>
+  );
 }
