@@ -29,7 +29,7 @@ export default function About() {
 ];
 
   return (
-    <section id="about" className="bg-white">
+    <section id="about" className="bg-white mt-8 md:mt-12 relative z-10">
 
       {/* 🔥 HERO */}
       <div className="relative py-24 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white">

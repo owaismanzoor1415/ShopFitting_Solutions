@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function Services() {
   return (
-    <section id="services" className="py-28 bg-gradient-to-r from-gray-100 via-white to-orange-100">
+    <section id="services" className="pt-20 pb-12 bg-gradient-to-r from-gray-100 via-white to-orange-100">
 
       {/* 🔥 HEADER */}
       <div className="max-w-7xl mx-auto px-4 text-center mb-20">
@@ -75,7 +75,7 @@ export default function Services() {
         ))}
 
       </div>
-      <div className="text-center mt-20">
+      <div className="text-center mt-12">
           <a
             href="/#contact"
             className="inline-flex items-center gap-2 px-10 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition shadow-lg hover:shadow-xl hover:scale-105"

@@ -84,8 +84,6 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    // FIX 1: Check immediately on mount if stats bar is already visible
-    // (handles mobile where the bar may be in the initial viewport or close to it)
     const checkInitialVisibility = () => {
       if (statsRef.current) {
         const rect = statsRef.current.getBoundingClientRect();
@@ -97,17 +95,15 @@ export default function Hero() {
       return false;
     };
 
-    // Try immediately
     if (checkInitialVisibility()) return;
 
-    // Also try after a short delay (after fonts/layout settle)
     const initTimer = setTimeout(() => {
       if (checkInitialVisibility()) return;
     }, 400);
 
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.1 } // lowered from 0.3 so it triggers earlier on small screens
+      { threshold: 0.1 }
     );
     if (statsRef.current) observer.observe(statsRef.current);
     return () => {
@@ -121,21 +117,19 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex flex-col overflow-hidden"
-      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+      className="relative flex flex-col"
+      style={{
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        background: '#ffffff',
+        overflow: 'visible',
+        position: 'relative',
+        zIndex: 1,
+      }}
     >
       {/* ── GOOGLE FONTS ── */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Syne:wght@400;500;600;700;800&display=swap');
 
-        @keyframes grain {
-          0%, 100% { transform: translate(0, 0); }
-          10% { transform: translate(-2%, -3%); }
-          30% { transform: translate(2%, 2%); }
-          50% { transform: translate(-1%, 3%); }
-          70% { transform: translate(3%, -1%); }
-          90% { transform: translate(-2%, 1%); }
-        }
         @keyframes lineExpand {
           from { transform: scaleX(0); }
           to { transform: scaleX(1); }
@@ -144,17 +138,9 @@ export default function Hero() {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes fadeSlideRight {
-          from { opacity: 0; transform: translateX(-20px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
         @keyframes shimmer {
           0%   { background-position: -200% center; }
           100% { background-position: 200% center; }
-        }
-        @keyframes pulseOrb {
-          0%, 100% { transform: scale(1); opacity: 0.5; }
-          50%       { transform: scale(1.08); opacity: 0.8; }
         }
         @keyframes rotateSlow {
           from { transform: rotate(0deg); }
@@ -169,89 +155,59 @@ export default function Hero() {
           to   { width: 100%; }
         }
 
-        .cta-primary:hover { background: #c2410c !important; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(234,88,12,0.3) !important; }
-        .cta-secondary:hover { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.2) !important; transform: translateY(-2px); }
+        .cta-primary { transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important; }
+        .cta-primary:hover { background: #c2410c !important; transform: translateY(-2px) !important; box-shadow: 0 12px 40px rgba(234,88,12,0.3) !important; }
+        .cta-secondary:hover { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.2) !important; transform: translateY(-2px) !important; }
         .cta-ghost:hover { color: rgba(0,0,0,0.7) !important; border-color: rgba(234,88,12,0.4) !important; }
         .stat-card:hover .stat-bar { animation: counterBar 0.6s ease forwards; }
-        .play-btn:hover { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234,88,12,0.1); }
+        .play-btn { transition: transform 0.2s, box-shadow 0.3s !important; }
+        .play-btn:hover { transform: scale(1.08) !important; box-shadow: 0 0 0 8px rgba(234,88,12,0.1) !important; }
 
-        * { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        /* Headline — always wrap cleanly */
+        .hero-headline {
+          word-break: break-word;
+          overflow-wrap: break-word;
+          white-space: normal;
+        }
 
-        /* FIX 2: Project cards — show on mobile (below lg) as a horizontal scroll row */
+        /* Project cards — horizontal scroll on mobile/tablet */
         .project-cards-mobile {
           display: flex;
           overflow-x: auto;
           gap: 12px;
-          padding: 0 1.5rem 1rem;
+          padding: 0 1.25rem 1rem;
           scrollbar-width: none;
           -ms-overflow-style: none;
-          margin-top: 24px;
+          margin-top: 28px;
         }
         .project-cards-mobile::-webkit-scrollbar { display: none; }
-        .project-cards-mobile .project-card-item {
-          flex-shrink: 0;
-        }
+        .project-cards-mobile .project-card-item { flex-shrink: 0; }
 
-        /* Hide mobile cards on xl and above (desktop uses absolute positioned ones) */
+        /* Hide mobile cards on xl+ (desktop uses absolute positioned ones) */
         @media (min-width: 1280px) {
           .project-cards-mobile { display: none; }
         }
+
+        /* Ensure buttons are never clipped */
+        .hero-content-area {
+          overflow: visible;
+        }
       `}</style>
 
-      {/* ── BACKGROUND SYSTEM ── */}
-      <div className="absolute inset-0 z-0">
+      {/* ── BACKGROUND — pure white with very subtle grid only ── */}
+      <div className="absolute inset-0 z-0" style={{ background: '#ffffff' }}>
 
-        {/* Clean white base */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(160deg, #ffffff 0%, #fafafa 40%, #f8f5f2 70%, #f5f0ea 100%)',
-        }} />
-
-        {/* Architectural grid lines — very subtle */}
-        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.04 }}>
+        {/* Architectural grid lines — extremely subtle */}
+        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.03 }}>
           <defs>
             <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-              <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#555" strokeWidth="0.5"/>
+              <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#333" strokeWidth="0.5"/>
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
 
-        {/* Diagonal sweep — signature element */}
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(112deg, transparent 54%, rgba(234,88,12,0.04) 54%, rgba(234,88,12,0.07) 72%, rgba(180,60,0,0.05) 100%)',
-        }} />
-
-        {/* Orange glow — top right */}
-        <div className="absolute" style={{
-          right: '-10%',
-          top: '-5%',
-          width: '60vw',
-          height: '70vh',
-          background: 'radial-gradient(ellipse at center, rgba(234,88,12,0.07) 0%, rgba(234,88,12,0.03) 40%, transparent 70%)',
-          filter: 'blur(60px)',
-          animation: 'pulseOrb 6s ease-in-out infinite',
-        }} />
-
-        {/* Warm tint glow — bottom left */}
-        <div className="absolute" style={{
-          left: '-5%',
-          bottom: '10%',
-          width: '40vw',
-          height: '40vh',
-          background: 'radial-gradient(ellipse at center, rgba(234,88,12,0.04) 0%, transparent 70%)',
-          filter: 'blur(50px)',
-        }} />
-
-        {/* Horizontal etched rules */}
-        {[18, 42, 68, 88].map(pct => (
-          <div key={pct} className="absolute w-full" style={{
-            top: `${pct}%`,
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.05) 20%, rgba(0,0,0,0.05) 80%, transparent 100%)',
-          }} />
-        ))}
-
-        {/* Rotating ring decoration — far right */}
+        {/* Rotating ring decoration — far right, desktop only */}
         <div className="absolute hidden xl:block" style={{
           right: '5%',
           top: '50%',
@@ -295,24 +251,23 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* ── LEFT VERTICAL RULE ── */}
+      {/* ── LEFT VERTICAL RULE — pushed further left so it NEVER overlaps text ── */}
       <div className="absolute z-10 hidden lg:flex flex-col items-center" style={{
-        left: '6%',
+        left: '2%',          /* moved far left, away from content */
         top: 0,
         bottom: 0,
-        gap: 0,
       }}>
         <div style={{
           width: 1,
           flex: 1,
-          background: 'linear-gradient(180deg, transparent 0%, rgba(234,88,12,0.3) 20%, rgba(234,88,12,0.3) 80%, transparent 100%)',
+          background: 'linear-gradient(180deg, transparent 0%, rgba(234,88,12,0.25) 20%, rgba(234,88,12,0.25) 80%, transparent 100%)',
         }} />
         <span style={{
           fontFamily: "'Syne', sans-serif",
           fontSize: '0.6rem',
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color: 'rgba(234,88,12,0.45)',
+          color: 'rgba(234,88,12,0.4)',
           writingMode: 'vertical-rl',
           transform: 'rotate(180deg)',
           padding: '12px 0',
@@ -322,21 +277,21 @@ export default function Hero() {
         <div style={{
           width: 1,
           height: 80,
-          background: 'linear-gradient(180deg, rgba(234,88,12,0.3) 0%, transparent 100%)',
+          background: 'linear-gradient(180deg, rgba(234,88,12,0.25) 0%, transparent 100%)',
         }} />
       </div>
 
-      {/* ── RIGHT SIDE PANEL — project showcase (desktop xl only, absolute) ── */}
+      {/* ── RIGHT SIDE PANEL — project showcase (desktop xl only) ── */}
       <div className="absolute z-10 hidden xl:block" style={{
         right: 0,
         top: 0,
         bottom: 0,
-        width: '38%',
+        width: '32%',
       }}>
         {[
-          { label: 'Luxury Retail', sub: 'Mayfair, London', top: '18%', delay: '0.9s' },
-          { label: 'Fashion Boutique', sub: 'Knightsbridge', top: '42%', delay: '1.1s' },
-          { label: 'Flagship Store', sub: 'Manchester', top: '64%', delay: '1.3s' },
+          { label: 'Luxury Retail', sub: 'Mayfair, London', top: '20%', delay: '0.9s' },
+          { label: 'Fashion Boutique', sub: 'Knightsbridge', top: '44%', delay: '1.1s' },
+          { label: 'Flagship Store', sub: 'Manchester', top: '66%', delay: '1.3s' },
         ].map((card) => (
           <div key={card.label} style={{
             position: 'absolute',
@@ -347,9 +302,8 @@ export default function Hero() {
             transition: `opacity 0.6s ease ${card.delay}, transform 0.6s ease ${card.delay}`,
           }}>
             <div style={{
-              background: 'rgba(255,255,255,0.8)',
-              border: '1px solid rgba(0,0,0,0.07)',
-              backdropFilter: 'blur(12px)',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.08)',
               borderRadius: 4,
               padding: '14px 20px',
               display: 'flex',
@@ -357,24 +311,22 @@ export default function Hero() {
               gap: 14,
               minWidth: 220,
               cursor: 'default',
+              boxShadow: '0 2px 20px rgba(0,0,0,0.07)',
               transition: 'background 0.3s, border-color 0.3s, transform 0.3s',
-              boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.98)';
               e.currentTarget.style.borderColor = 'rgba(234,88,12,0.2)';
               e.currentTarget.style.transform = 'translateX(-4px)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.8)';
-              e.currentTarget.style.borderColor = 'rgba(0,0,0,0.07)';
+              e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)';
               e.currentTarget.style.transform = 'translateX(0)';
             }}>
               <div style={{
                 width: 36,
                 height: 36,
                 borderRadius: 3,
-                background: 'linear-gradient(135deg, rgba(234,88,12,0.15), rgba(180,60,0,0.1))',
+                background: 'linear-gradient(135deg, rgba(234,88,12,0.12), rgba(180,60,0,0.08))',
                 flexShrink: 0,
                 display: 'flex',
                 alignItems: 'center',
@@ -413,266 +365,302 @@ export default function Hero() {
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="relative z-20 flex-1 flex items-center" style={{ paddingTop: '80px' }}>
-        <div className="w-full px-6 lg:px-0" style={{ paddingLeft: 'max(3rem, min(10%, 140px))' }}>
-          <div style={{ maxWidth: 680 }}>
+      <div className="relative z-20 block" style={{ paddingTop: '100px', paddingBottom: '3rem' }}>
+        <div
+          className="hero-content-area w-full"
+          style={{
+            /* Responsive padding: enough breathing room without hiding behind the ring decoration */
+            paddingLeft: 'clamp(1.25rem, 8vw, 120px)',
+            paddingRight: 'clamp(1.25rem, 4vw, 3rem)',
+          }}
+        >
+          {/* Constrain content width so it never bleeds into the right panel */}
+          <div style={{ maxWidth: 'min(800px, 65vw)', minWidth: 0 }}
+               className="xl:block"
+          >
+            {/* On non-XL screens let it take full width */}
+            <style>{`
+              @media (max-width: 1279px) {
+                .hero-inner { max-width: 100% !important; min-width: 0 !important; }
+              }
+            `}</style>
+            <div className="hero-inner" style={{ maxWidth: 640 }}>
 
-            {/* Eyebrow tag */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: 36,
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(16px)',
-              transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',
-            }}>
+              {/* Eyebrow tag */}
               <div style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: '#EA580C',
-                boxShadow: '0 0 10px rgba(234,88,12,0.6)',
-              }} />
-              <span style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '0.7rem',
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: 'rgba(234,88,12,0.9)',
-                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                marginBottom: 20,
+                opacity: ready ? 1 : 0,
+                transform: ready ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s',
               }}>
-                Premium Shopfitting Solutions
-              </span>
-              <div style={{
-                height: 1,
-                width: 40,
-                background: 'rgba(234,88,12,0.4)',
-                transformOrigin: 'left',
-                animation: ready ? 'lineExpand 0.6s ease 0.4s both' : 'none',
-              }} />
-            </div>
-
-            {/* Headline */}
-            <h1 style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 'clamp(3.2rem, 6.5vw, 6rem)',
-              lineHeight: 1.0,
-              fontWeight: 700,
-              color: '#111',
-              letterSpacing: '-0.02em',
-              marginBottom: 0,
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(28px)',
-              transition: 'opacity 0.65s ease 0.2s, transform 0.65s ease 0.2s',
-            }}>
-              We Craft Retail
-            </h1>
-
-            <h1 style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 'clamp(3.2rem, 6.5vw, 6rem)',
-              lineHeight: 1.0,
-              fontWeight: 300,
-              fontStyle: 'italic',
-              color: 'transparent',
-              WebkitTextStroke: '1.5px rgba(0,0,0,0.12)',
-              letterSpacing: '-0.02em',
-              marginBottom: 0,
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(28px)',
-              transition: 'opacity 0.65s ease 0.3s, transform 0.65s ease 0.3s',
-            }}>
-              Environments
-            </h1>
-
-            <h1 style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 'clamp(3.2rem, 6.5vw, 6rem)',
-              lineHeight: 1.0,
-              fontWeight: 700,
-              background: 'linear-gradient(90deg, #EA580C 0%, #F97316 45%, #EA580C 100%)',
-              backgroundSize: '200% auto',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '-0.02em',
-              animation: ready ? 'shimmer 4s linear 1s infinite' : 'none',
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(28px)',
-              transition: 'opacity 0.65s ease 0.4s, transform 0.65s ease 0.4s',
-            }}>
-              That Convert.
-            </h1>
-
-            {/* Sub-headline */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 20,
-              marginTop: 36,
-              marginBottom: 40,
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s',
-            }}>
-              <div style={{
-                width: 2,
-                height: 80,
-                background: 'linear-gradient(180deg, #EA580C 0%, rgba(234,88,12,0.1) 100%)',
-                flexShrink: 0,
-                borderRadius: 2,
-                marginTop: 4,
-              }} />
-              <p style={{
-                fontFamily: "'Syne', 'Helvetica Neue', sans-serif",
-                color: 'rgba(60,60,60,0.6)',
-                fontSize: '1rem',
-                lineHeight: 1.85,
-                fontWeight: 400,
-                maxWidth: 420,
-                margin: 0,
-              }}>
-                From concept to completion — we design and deliver premium shop
-                interiors that draw customers in, elevate their experience, and
-                measurably grow your revenue.
-              </p>
-            </div>
-
-            {/* CTA row */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 12,
-              marginBottom: 48,
-              opacity: ready ? 1 : 0,
-              transform: ready ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'opacity 0.6s ease 0.6s, transform 0.6s ease 0.6s',
-            }}>
-              {/* Primary CTA */}
-              <a
-                href="#contact"
-                className="cta-primary"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '1rem 2.2rem',
-                  background: '#EA580C',
-                  color: '#fff',
-                  fontFamily: "'Syne', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase',
-                  borderRadius: 3,
-                  textDecoration: 'none',
-                  transition: 'background 0.2s, transform 0.2s, box-shadow 0.2s',
-                  boxShadow: '0 6px 30px rgba(234,88,12,0.2)',
-                }}
-              >
-                Get a Free Quote
-                <ArrowRight size={14} />
-              </a>
-
-              {/* Showreel CTA */}
-              <button
-                className="play-btn"
-                onClick={() => setShowReel(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '1rem 1.8rem',
-                  background: 'rgba(0,0,0,0.03)',
-                  border: '1px solid rgba(0,0,0,0.1)',
-                  color: 'rgba(20,20,20,0.75)',
-                  fontFamily: "'Syne', sans-serif",
-                  fontWeight: 500,
-                  fontSize: '0.82rem',
-                  letterSpacing: '0.04em',
-                  borderRadius: 3,
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.3s',
-                }}
-              >
                 <div style={{
-                  width: 30,
-                  height: 30,
+                  width: 6,
+                  height: 6,
                   borderRadius: '50%',
-                  border: '1.5px solid rgba(234,88,12,0.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  background: '#EA580C',
+                  boxShadow: '0 0 10px rgba(234,88,12,0.6)',
                   flexShrink: 0,
-                }}>
-                  <Play size={10} fill="rgba(234,88,12,0.9)" color="rgba(234,88,12,0.9)" />
-                </div>
-                Watch Showreel
-              </button>
-
-              {/* Ghost CTA — Brochure */}
-              <a
-                href="public/shopfitting_brochure (1).pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cta-ghost"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '1rem 1.5rem',
-                  border: '1px solid rgba(0,0,0,0.1)',
-                  color: 'rgba(0,0,0,0.4)',
+                }} />
+                <span style={{
                   fontFamily: "'Syne', sans-serif",
-                  fontWeight: 400,
-                  fontSize: '0.78rem',
-                  letterSpacing: '0.06em',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  borderRadius: 3,
-                  textDecoration: 'none',
-                  transition: 'color 0.2s, border-color 0.2s',
+                  color: 'rgba(234,88,12,0.9)',
+                  fontWeight: 600,
+                }}>
+                  Premium Shopfitting Solutions
+                </span>
+                <div style={{
+                  height: 1,
+                  width: 40,
+                  background: 'rgba(234,88,12,0.4)',
+                  transformOrigin: 'left',
+                  animation: ready ? 'lineExpand 0.6s ease 0.4s both' : 'none',
+                  flexShrink: 0,
+                }} />
+              </div>
+
+              {/* Headline lines */}
+              <h1
+                className="hero-headline"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                  lineHeight: 0.8,
+                  fontWeight: 700,
+                  color: '#111111',
+                  letterSpacing: '-0.02em',
+                  margin: 0,
+                  opacity: ready ? 1 : 0,
+                  transform: ready ? 'translateY(0)' : 'translateY(28px)',
+                  transition: 'opacity 0.65s ease 0.2s, transform 0.65s ease 0.2s',
                 }}
               >
-                <Download size={12} />
-                Brochure
-              </a>
-            </div>
+                We Craft Retail
+              </h1>
 
-            {/* Trust badges */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 20,
-              opacity: ready ? 1 : 0,
-              transition: 'opacity 0.6s ease 0.75s',
-            }}>
-              {trustBadges.map(({ Icon, text }, i) => (
-                <div
-                  key={text}
+              <h1
+                className="hero-headline"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                  lineHeight: 1.0,
+                  fontWeight: 300,
+                  fontStyle: 'italic',
+                  color: 'transparent',
+                  WebkitTextStroke: '1.5px rgba(0,0,0,0.15)',
+                  letterSpacing: '-0.02em',
+                  margin: 0,
+                  opacity: ready ? 1 : 0,
+                  transform: ready ? 'translateY(0)' : 'translateY(28px)',
+                  transition: 'opacity 0.65s ease 0.3s, transform 0.65s ease 0.3s',
+                }}
+              >
+                Environments
+              </h1>
+
+              <h1
+                className="hero-headline"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+                  lineHeight: 1.0,
+                  fontWeight: 700,
+                  background: 'linear-gradient(90deg, #EA580C 0%, #F97316 45%, #EA580C 100%)',
+                  backgroundSize: '200% auto',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  letterSpacing: '-0.02em',
+                  animation: ready ? 'shimmer 4s linear 1s infinite' : 'none',
+                  margin: 0,
+                  opacity: ready ? 1 : 0,
+                  transform: ready ? 'translateY(0)' : 'translateY(28px)',
+                  transition: 'opacity 0.65s ease 0.4s, transform 0.65s ease 0.4s',
+                }}
+              >
+                That Convert.
+              </h1>
+
+              {/* Sub-headline */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 16,
+                marginTop: 20,
+                marginBottom: 20,
+                opacity: ready ? 1 : 0,
+                transform: ready ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s',
+              }}>
+                <div style={{
+                  width: 2,
+                  height: 72,
+                  background: 'linear-gradient(180deg, #EA580C 0%, rgba(234,88,12,0.1) 100%)',
+                  flexShrink: 0,
+                  borderRadius: 2,
+                  marginTop: 4,
+                }} />
+                <p style={{
+                  fontFamily: "'Syne', 'Helvetica Neue', sans-serif",
+                  color: 'rgba(60,60,60,0.65)',
+                  fontSize: 'clamp(0.88rem, 1.5vw, 1rem)',
+                  lineHeight: 1.85,
+                  fontWeight: 400,
+                  margin: 0,
+                }}>
+                  From concept to completion — we design and deliver premium shop
+                  interiors that draw customers in, elevate their experience, and
+                  measurably grow your revenue.
+                </p>
+              </div>
+
+              {/* CTA row — always visible, wraps on small screens */}
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 12,
+                marginBottom: 60,
+                opacity: ready ? 1 : 0,
+                transform: ready ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.6s ease 0.6s, transform 0.6s ease 0.6s',
+                position: 'relative',
+                zIndex: 30,
+              }}>
+                {/* Primary CTA */}
+                <a
+                  href="#contact"
+                  className="cta-primary"
                   style={{
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    gap: 7,
+                    gap: 10,
+                    padding: '0.9rem 2rem',
+                    background: '#EA580C',
+                    color: '#ffffff',
                     fontFamily: "'Syne', sans-serif",
-                    color: 'rgba(60,60,60,0.45)',
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.08em',
-                    opacity: ready ? 1 : 0,
-                    animation: ready ? `badgePop 0.5s ease ${0.8 + i * 0.1}s both` : 'none',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    borderRadius: 3,
+                    textDecoration: 'none',
+                    boxShadow: '0 6px 30px rgba(234,88,12,0.25)',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  <Icon size={12} style={{ color: 'rgba(234,88,12,0.6)', flexShrink: 0 }} />
-                  {text}
-                  {i < trustBadges.length - 1 && (
-                    <span style={{ marginLeft: 12, color: 'rgba(0,0,0,0.12)' }}>|</span>
-                  )}
-                </div>
-              ))}
-            </div>
+                  Get a Free Quote
+                  <ArrowRight size={14} />
+                </a>
 
+                {/* Showreel CTA */}
+                <button
+                  className="play-btn"
+                  onClick={() => setShowReel(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '0.9rem 1.6rem',
+                    background: '#ffffff',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    color: 'rgba(20,20,20,0.75)',
+                    fontFamily: "'Syne', sans-serif",
+                    fontWeight: 500,
+                    fontSize: '0.8rem',
+                    letterSpacing: '0.04em',
+                    borderRadius: 3,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <div style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    border: '1.5px solid rgba(234,88,12,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <Play size={9} fill="rgba(234,88,12,0.9)" color="rgba(234,88,12,0.9)" />
+                  </div>
+                  Watch Showreel
+                </button>
+
+                {/* Ghost CTA — Brochure */}
+                <a
+                  href="public/shopfitting_brochure (1).pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cta-ghost"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '0.9rem 1.4rem',
+                    border: '1px solid rgba(0,0,0,0.12)',
+                    color: 'rgba(0,0,0,0.45)',
+                    fontFamily: "'Syne', sans-serif",
+                    fontWeight: 400,
+                    fontSize: '0.76rem',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    borderRadius: 3,
+                    textDecoration: 'none',
+                    transition: 'color 0.2s, border-color 0.2s',
+                    whiteSpace: 'nowrap',
+                    background: '#ffffff',
+                  }}
+                >
+                  <Download size={12} />
+                  Brochure
+                </a>
+              </div>
+
+              {/* Trust badges */}
+              <div style={{
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 16,
+  rowGap: '10px',
+  opacity: ready ? 1 : 0,
+  transition: 'opacity 0.6s ease 0.75s',
+  position: 'relative',
+  zIndex: 30
+}}>
+                {trustBadges.map(({ Icon, text }, i) => (
+                  <div
+                    key={text}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 7,
+                      fontFamily: "'Syne', sans-serif",
+                      color: 'rgba(60,60,60,0.45)',
+                      fontSize: '0.72rem',
+                      letterSpacing: '0.08em',
+                      opacity: ready ? 1 : 0,
+                      animation: ready ? `badgePop 0.5s ease ${0.8 + i * 0.1}s both` : 'none',
+                    }}
+                  >
+                    <Icon size={12} style={{ color: 'rgba(234,88,12,0.6)', flexShrink: 0 }} />
+                    {text}
+                    {i < trustBadges.length - 1 && (
+                      <span style={{ marginLeft: 10, color: 'rgba(0,0,0,0.12)' }}>|</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+            </div>
           </div>
 
-          {/* ── MOBILE PROJECT CARDS (visible on < xl screens, horizontal scroll) ── */}
+          {/* ── MOBILE PROJECT CARDS ── */}
           <div
             className="project-cards-mobile"
             style={{
@@ -687,22 +675,21 @@ export default function Hero() {
             ].map((card) => (
               <div key={card.label} className="project-card-item">
                 <div style={{
-                  background: 'rgba(255,255,255,0.9)',
-                  border: '1px solid rgba(0,0,0,0.07)',
-                  backdropFilter: 'blur(12px)',
+                  background: '#ffffff',
+                  border: '1px solid rgba(0,0,0,0.08)',
                   borderRadius: 4,
                   padding: '12px 16px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  minWidth: 200,
+                  minWidth: 190,
                   boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
                 }}>
                   <div style={{
                     width: 32,
                     height: 32,
                     borderRadius: 3,
-                    background: 'linear-gradient(135deg, rgba(234,88,12,0.15), rgba(180,60,0,0.1))',
+                    background: 'linear-gradient(135deg, rgba(234,88,12,0.12), rgba(180,60,0,0.08))',
                     flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
@@ -749,8 +736,7 @@ export default function Hero() {
         className="relative z-20"
         style={{
           borderTop: '1px solid rgba(0,0,0,0.07)',
-          background: 'rgba(255,255,255,0.8)',
-          backdropFilter: 'blur(20px)',
+          background: '#ffffff',
           opacity: ready ? 1 : 0,
           transition: 'opacity 0.6s ease 0.85s',
         }}
@@ -769,8 +755,8 @@ export default function Hero() {
           className="mx-auto"
           style={{
             maxWidth: 1400,
-            paddingLeft: 'max(3rem, min(10%, 140px))',
-            paddingRight: '3rem',
+            paddingLeft: 'clamp(1.25rem, 8vw, 120px)',
+            paddingRight: 'clamp(1.25rem, 4vw, 3rem)',
             paddingTop: '1.5rem',
             paddingBottom: '1.5rem',
             display: 'flex',
@@ -843,7 +829,7 @@ export default function Hero() {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(0,0,0,0.6)',
+            background: 'rgba(0,0,0,0.55)',
             backdropFilter: 'blur(12px)',
             display: 'flex',
             alignItems: 'center',
@@ -858,14 +844,13 @@ export default function Hero() {
               position: 'relative',
               width: '100%',
               maxWidth: 900,
-              background: '#fff',
+              background: '#ffffff',
               border: '1px solid rgba(234,88,12,0.15)',
               borderRadius: 6,
-              overflow: 'hidden',
-              boxShadow: '0 40px 100px rgba(0,0,0,0.25), 0 0 0 1px rgba(234,88,12,0.08)',
+              overflow: 'visible',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.25)',
             }}
           >
-            {/* Close button */}
             <button
               onClick={() => setShowReel(false)}
               style={{
@@ -891,7 +876,6 @@ export default function Hero() {
               <X size={15} />
             </button>
 
-            {/* 16:9 video wrapper */}
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <iframe
                 src="https://www.youtube.com/embed/jnpuXhH9C6I"
@@ -908,7 +892,6 @@ export default function Hero() {
               />
             </div>
 
-            {/* Caption bar */}
             <div style={{
               padding: '14px 20px',
               borderTop: '1px solid rgba(0,0,0,0.06)',

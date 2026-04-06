@@ -12,7 +12,7 @@ const iconMap = {
 
 export default function Industries() {
   return (
-    <section id="industries" className="py-16 bg-white">
+    <section id="industries" className="pt-12 pb-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* 🔥 HEADER */}
