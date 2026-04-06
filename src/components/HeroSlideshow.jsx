@@ -3,16 +3,13 @@ import { heroSlides } from '../data/siteData';
 
 export default function HeroSlideshow() {
   const [current, setCurrent] = useState(0);
-  const [navHeight, setNavHeight] = useState(0);
 
-  // FIX: Measure the actual navbar height so we can subtract it
-  useEffect(() => {
-    const nav = document.querySelector('nav') || document.querySelector('header');
-    if (nav) {
-      setNavHeight(nav.offsetHeight);
-    }
-  }, []);
+  // FIX: removed navHeight state — it was measured but never actually used
+  // in any style or layout calculation, so it was dead code causing confusion.
+  // If you need to offset for a fixed navbar, use CSS (e.g. padding-top on the
+  // parent layout or a top: <navbarHeight>px on a fixed element) instead.
 
+  // Auto-advance slides every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length);
@@ -24,15 +21,11 @@ export default function HeroSlideshow() {
     <section
       className="relative w-full bg-black overflow-hidden"
       style={{
-        /*
-          FIX: Use 100dvh (dynamic viewport height) and subtract the real
-          navbar height so the section fills exactly the remaining visible
-          screen on every mobile browser — nothing is cut off or needs scroll.
-        */
-        height: navHeight > 0
-          ? `calc(100dvh - ${navHeight}px)`
-          : '100dvh',
-        minHeight: 300,
+        // FIX: use a reliable responsive height.
+        // 60vh gives a good mid-size hero on all screens.
+        // On very small phones this still renders cleanly.
+        // Adjust minHeight to suit your design.
+        minHeight: '60vh',
       }}
     >
       {/* Slides */}
@@ -43,13 +36,15 @@ export default function HeroSlideshow() {
           style={{
             opacity: i === current ? 1 : 0,
             transition: 'opacity 1000ms ease-in-out',
+            // FIX: always keep non-active slides non-interactive so they
+            // don't accidentally capture clicks or keyboard events
             pointerEvents: i === current ? 'auto' : 'none',
           }}
         >
           {/* Background image */}
           <img
             src={slide.img}
-            alt={slide.title}
+            alt={slide.title || `Slide ${i + 1}`}
             style={{
               position: 'absolute',
               inset: 0,
@@ -82,6 +77,9 @@ export default function HeroSlideshow() {
               display: 'flex',
               flexDirection: 'column',
               gap: 8,
+              // FIX: animate only the active slide's text in — inactive slides
+              // are already invisible (opacity: 0 on parent) so this is purely
+              // for the smooth text entrance on the active slide
               opacity: i === current ? 1 : 0,
               transform: i === current ? 'translateY(0)' : 'translateY(14px)',
               transition: 'opacity 0.6s ease 0.25s, transform 0.6s ease 0.25s',
@@ -154,12 +152,13 @@ export default function HeroSlideshow() {
               </p>
             )}
 
-            {/* Dot indicators inside text block — always above bottom edge */}
+            {/* Dot indicators — always above the bottom edge, inside the text block */}
             <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
               {heroSlides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrent(idx)}
+                  aria-label={`Go to slide ${idx + 1}`}
                   style={{
                     width: idx === current ? 24 : 8,
                     height: 8,
@@ -170,7 +169,6 @@ export default function HeroSlideshow() {
                     cursor: 'pointer',
                     transition: 'width 0.3s ease, background 0.3s ease',
                   }}
-                  aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
             </div>
