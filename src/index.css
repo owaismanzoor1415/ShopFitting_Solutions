@@ -24,37 +24,59 @@ body {
   color: #111827;
 }
 
-/* ===== FIX: Root must have full height so sections can fill the viewport ===== */
+/* ===== FIX ROOT HEIGHT (IMPORTANT) ===== */
 html,
 body,
 #root {
-  height: 100%;
+  height: auto;          /* ✅ FIXED */
   min-height: 100%;
 }
 
-/* ===== FIX: Hero slideshow section always fills the visible screen on mobile ===== */
-/* 
-  100dvh = dynamic viewport height — shrinks/grows as mobile browser chrome hides/shows.
-  This ensures the hero image + thumbnail are ALWAYS fully visible without scrolling,
-  on every phone size (iPhone SE, 12, 14 Pro Max, Android, etc.)
-*/
+/* ===== HERO HEIGHT FIX ===== */
+
+/* 📱 MOBILE */
 #home,
 .hero-slideshow-section {
-  height: 100dvh;
-  max-height: 100dvh;
-  min-height: 300px;
+  height: auto;          /* ✅ allow full content */
+  min-height: auto;
 }
 
-/* Fallback for browsers that don't support dvh */
-@supports not (height: 100dvh) {
+/* 💻 DESKTOP */
+@media (min-width: 1024px) {
   #home,
   .hero-slideshow-section {
-    height: 100vh;
-    height: -webkit-fill-available; /* iOS Safari */
+    height: auto !important;
+    min-height: auto;
+    max-height: none !important;
   }
 }
 
-/* ===== HERO CONTROLS (KEEP IF USED ELSEWHERE) ===== */
+/* ===== HERO IMAGE FIX (MOST IMPORTANT) ===== */
+.hero-slideshow-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;   /* ✅ SHOW FULL IMAGE */
+  object-position: center;
+  background: #000;                 /* optional for empty space */
+}
+
+/* ===== OPTIONAL CENTERING ===== */
+.hero-slideshow-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== FALLBACK (iOS) ===== */
+@supports not (height: 100dvh) {
+  #home,
+  .hero-slideshow-section {
+    height: auto;
+    height: -webkit-fill-available;
+  }
+}
+
+/* ===== HERO CONTROLS ===== */
 .hero-slide-caption {
   position: absolute;
   bottom: 0;
