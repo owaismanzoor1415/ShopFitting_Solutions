@@ -90,7 +90,7 @@ function StatItem({ stat, index }) {
 
 export default function About() {
   return (
-    <section id="about" className="bg-white relative z-10" style={{ marginTop: 0, paddingTop: 0 }}>
+    <section id="about" className="bg-white relative z-10" style={{ marginTop: 0, paddingTop: 11 }}>
       
       {/* HERO - REDUCED PADDING */}
       <div className="relative py-8 md:py-12 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white" style={{ marginTop: 0 }}>

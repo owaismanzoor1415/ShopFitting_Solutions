@@ -35,7 +35,9 @@ export default function Contact() {
     'w-full border-b border-gray-300 py-3 focus:border-orange-500 outline-none transition bg-transparent';
 
   return (
-    <section id="contact" className="py-28 bg-gray-100">
+    // ✅ CHANGE: Added scroll-mt-20 — offsets the fixed navbar height so the
+    // section snaps flush to the navbar instead of leaving a black gap above it.
+    <section id="contact" className="py-28 bg-gray-100 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-start">
 
         {/* 🔥 LEFT SIDE */}
@@ -45,7 +47,7 @@ export default function Contact() {
           </span>
 
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-6 leading-tight">
-            Let’s Build Your <br />
+            Let's Build Your <br />
             <span className="text-orange-500">Next Retail Space</span>
           </h2>
 
@@ -120,7 +122,7 @@ export default function Contact() {
             <div className="text-left">
               <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
               <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
-              <p className="text-gray-600">We’ll contact you within 24 hours.</p>
+              <p className="text-gray-600">We'll contact you within 24 hours.</p>
             </div>
           )}
         </div>

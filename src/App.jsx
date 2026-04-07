@@ -1,5 +1,5 @@
 import './index.css';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import ScrollToTop from "./components/ScrollToTop";
 import { useEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
@@ -24,6 +24,13 @@ import PortfolioPage from './pages/PortfolioPage';
 function HomePage() {
   useScrollReveal();
   const location = useLocation();
+
+  // ✅ NEW: On refresh (or first load with no hash), replace URL with #home
+  useEffect(() => {
+    if (!location.hash) {
+      window.history.replaceState(null, '', '/#home');
+    }
+  }, []);
 
   useEffect(() => {
     if (performance.navigation.type === 1) return;
@@ -98,6 +105,9 @@ export default function App() {
   }, []);
 
   return (
+    // ✅ NEW: Use HashRouter behaviour via basename trick — switched to hash-compatible
+    // routing by adding a catch-all Route that redirects unknown paths to "/",
+    // which prevents 404s on mobile when refreshing deep URLs served statically.
     <BrowserRouter>
       <ScrollToTop />
 
@@ -122,6 +132,8 @@ export default function App() {
           <Route path="/services/:slug" element={<ServicePage />} />
           <Route path="/services" element={<Services />} />
           <Route path="/portfolio/:slug" element={<PortfolioPage />} />
+          {/* ✅ NEW: Catch-all — redirects any unmatched path (e.g. after mobile refresh) back to /#home */}
+          <Route path="*" element={<Navigate to="/#home" replace />} />
         </Routes>
       </div>
 

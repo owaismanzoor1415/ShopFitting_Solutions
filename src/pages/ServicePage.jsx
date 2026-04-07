@@ -187,6 +187,102 @@ export default function ServicePage() {
     </div>
   );
 
+  /* ── Reusable Quote Form JSX (used in both mobile inline + desktop sidebar) ── */
+  const QuoteForm = () => (
+    <div id="quote-form" style={{ background: DARK, borderRadius: '8px', padding: '26px 22px', color: '#fff' }}>
+      <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '17px', fontWeight: 800, marginBottom: '4px' }}>Get A Free Quote</h3>
+      <div style={{ width: '30px', height: '3px', background: ORANGE, marginBottom: '18px', borderRadius: '2px' }} />
+
+      {(formStep === 'idle' || formStep === 'loading') && (
+        <form onSubmit={handleSubmit} noValidate>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {fieldBlock('name', 'Your Full Name *')}
+            {fieldBlock('email', 'Email Address *')}
+            {fieldBlock('phone', 'Phone Number *')}
+            {fieldBlock('city', 'City / Location *')}
+            {fieldBlock('message', 'Tell us about your project... *', 'textarea')}
+
+            {formStep === 'loading' && (
+              <div style={{ height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', background: ORANGE, borderRadius: '2px', animation: 'progressBar 1.8s ease-in-out forwards' }} />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={formStep === 'loading'}
+              style={{
+                padding: '13px',
+                background: formStep === 'loading' ? 'rgba(232,119,34,0.55)' : ORANGE,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: 800,
+                fontSize: '13px',
+                cursor: formStep === 'loading' ? 'not-allowed' : 'pointer',
+                fontFamily: "'Montserrat', sans-serif",
+                letterSpacing: '0.5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'background 0.2s',
+                marginTop: '4px',
+              }}
+            >
+              {formStep === 'loading' ? (
+                <>
+                  <span style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+                  Sending your request...
+                </>
+              ) : 'Make Request →'}
+            </button>
+
+            <a href="tel:+919999999999" style={{ display: 'block', textAlign: 'center', padding: '11px', border: '1px solid rgba(255,255,255,0.18)', borderRadius: '4px', color: 'rgba(255,255,255,0.6)', fontSize: '12px', textDecoration: 'none' }}>
+              📞 Request a Call Back
+            </a>
+          </div>
+        </form>
+      )}
+
+      {formStep === 'success' && (
+        <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(74,222,128,0.1)', border: '2px solid #4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M5 14l6.5 6.5L23 8" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Request Submitted!</p>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginBottom: '6px' }}>
+            Thank you, <strong style={{ color: 'rgba(255,255,255,0.9)' }}>{formData.name.split(' ')[0]}</strong>. We've received your enquiry and will respond within <strong style={{ color: ORANGE }}>24 hours</strong>.
+          </p>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginBottom: '20px' }}>Confirmation sent to {formData.email}</p>
+
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '6px', padding: '14px', textAlign: 'left', marginBottom: '18px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: ORANGE, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px' }}>What happens next</p>
+            {[
+              { icon: '✉', text: 'Confirmation email sent to you' },
+              { icon: '📞', text: 'Our team calls within 24 hrs' },
+              { icon: '📐', text: 'Free site survey scheduled' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: i < 2 ? '8px' : 0 }}>
+                <span style={{ fontSize: '13px', marginTop: '1px' }}>{item.icon}</span>
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{item.text}</span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={handleReset}
+            style={{ width: '100%', padding: '11px', background: 'transparent', border: `1px solid ${ORANGE}`, borderRadius: '4px', color: ORANGE, fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Montserrat', sans-serif" }}
+          >
+            Submit Another Request
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div style={{ fontFamily: "'Nunito Sans', sans-serif", background: '#fff', color: TEXT, lineHeight: 1.7 }}>
 
@@ -336,7 +432,11 @@ export default function ServicePage() {
               <p style={{ fontWeight: 800, fontSize: '15px', color: DARK, fontFamily: "'Montserrat', sans-serif", marginBottom: '4px' }}>Need More Information?</p>
               <p style={{ fontSize: '13px', color: MUTED }}>Our team is here to help you. Get in touch with us today.</p>
             </div>
-            <a href="/contact" style={{ padding: '11px 26px', background: ORANGE, color: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '13px', textDecoration: 'none', letterSpacing: '0.3px', whiteSpace: 'nowrap' }}>Contact Us</a>
+            <a href="/#contact"
+   style={{ padding: '11px 26px', background: ORANGE, color: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '13px', textDecoration: 'none', letterSpacing: '0.3px', whiteSpace: 'nowrap' }}
+>
+  Contact Us
+</a>
           </div>
 
           <div style={{ padding: isMobile ? '0 20px' : '0', marginBottom: '44px' }}>
@@ -382,77 +482,26 @@ export default function ServicePage() {
 
           {service.images.length >= 2 && (
             <div style={{ padding: isMobile ? '0 20px' : '0', marginBottom: '44px' }}>
-  <h2 style={{
-    fontFamily: "'Montserrat', sans-serif",
-    fontSize: isMobile ? '20px' : '24px',
-    fontWeight: 800,
-    color: DARK,
-    marginBottom: '8px'
-  }}>
-    Project Transformation Breakdown
-  </h2>
-
-  <div style={{ width: '36px', height: '3px', background: ORANGE, marginBottom: '24px', borderRadius: '2px' }} />
-
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
-    gap: '16px'
-  }}>
-
-    {[
-      {
-        title: 'The Challenge',
-        desc: 'The existing retail space lacked structure, poor lighting reduced product visibility, and customer flow was inefficient.'
-      },
-      {
-        title: 'Our Approach',
-        desc: 'We redesigned the layout with strategic zoning, introduced premium lighting, and optimized fixture placement.'
-      },
-      {
-        title: 'Final Outcome',
-        desc: 'A clean, high-end retail environment that improves customer experience and enhances product visibility.'
-      }
-    ].map((item, i) => (
-      <div key={i} style={{
-        border: `1px solid ${BORDER}`,
-        borderRadius: '6px',
-        padding: '20px',
-        background: '#fff',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)'
-      }}>
-        <p style={{
-          fontSize: '12px',
-          fontWeight: 800,
-          color: ORANGE,
-          marginBottom: '8px',
-          letterSpacing: '1px'
-        }}>
-          {String(i + 1).padStart(2, '0')}
-        </p>
-
-        <h3 style={{
-          fontSize: '15px',
-          fontWeight: 800,
-          color: DARK,
-          marginBottom: '6px',
-          fontFamily: "'Montserrat', sans-serif"
-        }}>
-          {item.title}
-        </h3>
-
-        <p style={{
-          fontSize: '13px',
-          color: MUTED,
-          lineHeight: 1.6
-        }}>
-          {item.desc}
-        </p>
-      </div>
-    ))}
-
-  </div>
-</div>
+              <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? '20px' : '24px', fontWeight: 800, color: DARK, marginBottom: '8px' }}>
+                Project Transformation Breakdown
+              </h2>
+              <div style={{ width: '36px', height: '3px', background: ORANGE, marginBottom: '24px', borderRadius: '2px' }} />
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '16px' }}>
+                {[
+                  { title: 'The Challenge', desc: 'The existing retail space lacked structure, poor lighting reduced product visibility, and customer flow was inefficient.' },
+                  { title: 'Our Approach', desc: 'We redesigned the layout with strategic zoning, introduced premium lighting, and optimized fixture placement.' },
+                  { title: 'Final Outcome', desc: 'A clean, high-end retail environment that improves customer experience and enhances product visibility.' }
+                ].map((item, i) => (
+                  <div key={i} style={{ border: `1px solid ${BORDER}`, borderRadius: '6px', padding: '20px', background: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 800, color: ORANGE, marginBottom: '8px', letterSpacing: '1px' }}>
+                      {String(i + 1).padStart(2, '0')}
+                    </p>
+                    <h3 style={{ fontSize: '15px', fontWeight: 800, color: DARK, marginBottom: '6px', fontFamily: "'Montserrat', sans-serif" }}>{item.title}</h3>
+                    <p style={{ fontSize: '13px', color: MUTED, lineHeight: 1.6 }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           <div style={{ padding: isMobile ? '0' : '0', marginBottom: '44px' }}>
@@ -460,9 +509,9 @@ export default function ServicePage() {
             <div style={{ width: '36px', height: '3px', background: ORANGE, marginBottom: '20px', borderRadius: '2px' }} />
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '2px' }}>
               {service.images.map((img, i) => (
-                <div key={i} 
-                className="gallery-item"
-                onClick={() => setPopupImg(img)}
+                <div key={i}
+                  className="gallery-item"
+                  onClick={() => setPopupImg(img)}
                   style={{ overflow: 'hidden', borderRadius: '5px', cursor: 'pointer', border: `2px solid ${i === activeImg ? ORANGE : 'transparent'}`, transition: 'border-color 0.2s' }}>
                   <img src={img} alt={`Project ${i + 1}`}
                     style={{ width: '100%', height: isMobile ? '240px' : '260px', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
@@ -473,12 +522,54 @@ export default function ServicePage() {
               ))}
             </div>
             {popupImg && (
-  <div className="image-modal" onClick={() => setPopupImg(null)}>
-    <span className="image-modal-close">×</span>
-    <img src={popupImg} alt="Preview" />
-  </div>
-)}
+              <div className="image-modal" onClick={() => setPopupImg(null)}>
+                <span className="image-modal-close">×</span>
+                <img src={popupImg} alt="Preview" />
+              </div>
+            )}
           </div>
+
+          {/* ── Mobile Quote Form ── */}
+          {isMobile && (
+            <div style={{ padding: '0 20px', marginBottom: '44px' }}>
+              <QuoteForm />
+            </div>
+          )}
+
+          {/* ── FIX: Mobile — Our Services + Driven by Results ── */}
+          {isMobile && (
+            <div style={{ padding: '0 20px', marginBottom: '44px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+              {/* Other Services */}
+              <div style={{ border: `1px solid ${BORDER}`, borderRadius: '6px', overflow: 'hidden' }}>
+                <div style={{ background: GREY_MID, padding: '14px 18px' }}>
+                  <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', fontWeight: 800, color: '#fff', margin: 0 }}>Our Services</h3>
+                </div>
+                {otherServices.map((s, i) => (
+                  <Link key={i} to={s.href}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 18px', textDecoration: 'none', borderBottom: i < otherServices.length - 1 ? `1px solid ${BORDER}` : 'none', fontSize: '13px', fontWeight: 700, color: DARK, transition: 'all 0.2s', background: '#fff' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = ORANGE; e.currentTarget.style.background = GREY_BG; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = DARK; e.currentTarget.style.background = '#fff'; }}
+                  >
+                    <span>{s.label}</span>
+                    <span style={{ fontSize: '16px' }}>›</span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Stats */}
+              <div style={{ background: ORANGE, borderRadius: '6px', padding: '22px', color: '#fff' }}>
+                <p style={{ fontSize: '11px', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.8, marginBottom: '14px', fontWeight: 700 }}>Driven by Results</p>
+                {[['500+', 'Projects Delivered'], ['200+', 'Locations Covered'], ['20+', 'Years in Business'], ['4.9★', 'Client Satisfaction']].map(([num, label]) => (
+                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.2)', padding: '9px 0' }}>
+                    <span style={{ fontSize: '22px', fontWeight: 900, fontFamily: "'Montserrat', sans-serif" }}>{num}</span>
+                    <span style={{ fontSize: '12px', opacity: 0.8, textAlign: 'right', maxWidth: '110px', lineHeight: 1.4 }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
 
           <div style={{ padding: isMobile ? '0 20px' : '0', marginBottom: '44px' }}>
             <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? '20px' : '24px', fontWeight: 800, color: DARK, marginBottom: '8px' }}>Frequently Asked Questions (FAQs)</h2>
@@ -499,105 +590,11 @@ export default function ServicePage() {
 
         </div>
 
-        {/* SIDEBAR */}
+        {/* SIDEBAR — desktop only */}
         {!isMobile && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '72px' }}>
 
-            {/* ── DYNAMIC QUOTE FORM ── */}
-            <div style={{ background: DARK, borderRadius: '8px', padding: '26px 22px', color: '#fff' }}>
-              <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '17px', fontWeight: 800, marginBottom: '4px' }}>Get A Free Quote</h3>
-              <div style={{ width: '30px', height: '3px', background: ORANGE, marginBottom: '18px', borderRadius: '2px' }} />
-
-              {/* FORM */}
-              {(formStep === 'idle' || formStep === 'loading') && (
-                <form onSubmit={handleSubmit} noValidate>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {fieldBlock('name', 'Your Full Name *')}
-                    {fieldBlock('email', 'Email Address *')}
-                    {fieldBlock('phone', 'Phone Number *')}
-                    {fieldBlock('city', 'City / Location *')}
-                    {fieldBlock('message', 'Tell us about your project... *', 'textarea')}
-
-                    {formStep === 'loading' && (
-                      <div style={{ height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', background: ORANGE, borderRadius: '2px', animation: 'progressBar 1.8s ease-in-out forwards' }} />
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={formStep === 'loading'}
-                      style={{
-                        padding: '13px',
-                        background: formStep === 'loading' ? 'rgba(232,119,34,0.55)' : ORANGE,
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontWeight: 800,
-                        fontSize: '13px',
-                        cursor: formStep === 'loading' ? 'not-allowed' : 'pointer',
-                        fontFamily: "'Montserrat', sans-serif",
-                        letterSpacing: '0.5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        transition: 'background 0.2s',
-                        marginTop: '4px',
-                      }}
-                    >
-                      {formStep === 'loading' ? (
-                        <>
-                          <span style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
-                          Sending your request...
-                        </>
-                      ) : 'Make Request →'}
-                    </button>
-
-                    <a href="tel:+919999999999" style={{ display: 'block', textAlign: 'center', padding: '11px', border: '1px solid rgba(255,255,255,0.18)', borderRadius: '4px', color: 'rgba(255,255,255,0.6)', fontSize: '12px', textDecoration: 'none' }}>
-                      📞 Request a Call Back
-                    </a>
-                  </div>
-                </form>
-              )}
-
-              {/* SUCCESS */}
-              {formStep === 'success' && (
-                <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(74,222,128,0.1)', border: '2px solid #4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                      <path d="M5 14l6.5 6.5L23 8" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Request Submitted!</p>
-                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginBottom: '6px' }}>
-                    Thank you, <strong style={{ color: 'rgba(255,255,255,0.9)' }}>{formData.name.split(' ')[0]}</strong>. We've received your enquiry and will respond within <strong style={{ color: ORANGE }}>24 hours</strong>.
-                  </p>
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginBottom: '20px' }}>Confirmation sent to {formData.email}</p>
-
-                  <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '6px', padding: '14px', textAlign: 'left', marginBottom: '18px' }}>
-                    <p style={{ fontSize: '10px', fontWeight: 700, color: ORANGE, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px' }}>What happens next</p>
-                    {[
-                      { icon: '✉', text: 'Confirmation email sent to you' },
-                      { icon: '📞', text: 'Our team calls within 24 hrs' },
-                      { icon: '📐', text: 'Free site survey scheduled' },
-                    ].map((item, i) => (
-                      <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: i < 2 ? '8px' : 0 }}>
-                        <span style={{ fontSize: '13px', marginTop: '1px' }}>{item.icon}</span>
-                        <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{item.text}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={handleReset}
-                    style={{ width: '100%', padding: '11px', background: 'transparent', border: `1px solid ${ORANGE}`, borderRadius: '4px', color: ORANGE, fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: "'Montserrat', sans-serif" }}
-                  >
-                    Submit Another Request
-                  </button>
-                </div>
-              )}
-            </div>
+            <QuoteForm />
 
             {/* Other Services */}
             <div style={{ border: `1px solid ${BORDER}`, borderRadius: '6px', overflow: 'hidden' }}>
@@ -641,7 +638,25 @@ export default function ServicePage() {
           End-to-end {service.title.toLowerCase()} from concept to installation. Free site surveys and detailed quotations — no obligation.
         </p>
         <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/#contact" style={{ padding: '14px 34px', background: ORANGE, color: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '13px', textDecoration: 'none', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Get a Free Quote</a>
+          {/* FIX: "Get a Free Quote" scrolls to the inline quote form on mobile, navigates to /contact on desktop */}
+          {isMobile ? (
+            <button
+              onClick={() => {
+                const form = document.getElementById('quote-form');
+                if (form) form.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{ padding: '14px 34px', background: ORANGE, color: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '13px', border: 'none', cursor: 'pointer', letterSpacing: '0.5px', textTransform: 'uppercase' }}
+            >
+              Get a Free Quote
+            </button>
+          ) : (
+            <Link
+              to="/contact"
+              style={{ padding: '14px 34px', background: ORANGE, color: '#fff', borderRadius: '4px', fontWeight: 800, fontSize: '13px', textDecoration: 'none', letterSpacing: '0.5px', textTransform: 'uppercase' }}
+            >
+              Get a Free Quote
+            </Link>
+          )}
           <a href="tel:+919999999999" style={{ padding: '14px 34px', border: '1.5px solid rgba(255,255,255,0.25)', color: '#fff', borderRadius: '4px', fontWeight: 700, fontSize: '13px', textDecoration: 'none' }}>Call Us Now</a>
         </div>
       </div>
