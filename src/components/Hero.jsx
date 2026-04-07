@@ -15,14 +15,15 @@ const trustBadges = [
 ];
 
 const cards = [
-  { label: 'Luxury Retail',       sub: 'Mayfair, London',      delay: '0.1s' },
-  { label: 'Fashion Boutique',    sub: 'Knightsbridge',        delay: '0.2s' },
-  { label: 'Flagship Store',      sub: 'Manchester',           delay: '0.3s' },
-  { label: 'Jewelry Showroom',    sub: 'Birmingham',           delay: '0.4s' },
-  { label: 'Corporate Office',    sub: 'Leeds',                delay: '0.5s' },
-  { label: 'Restaurant & Cafe',   sub: 'Glasgow',              delay: '0.6s' },
-];
+  { label: 'Luxury Retail',    sub: 'Mayfair, London',  delay: '0.1s' },
+  { label: 'Fashion Boutique', sub: 'Knightsbridge',    delay: '0.2s' },
+  { label: 'Flagship Store',   sub: 'Manchester',       delay: '0.3s' },
 
+  // ✅ NEW ADDED CARDS
+  { label: 'Supermarket Design', sub: 'Birmingham',     delay: '0.4s' },
+  { label: 'Café & Bakery',      sub: 'Soho, London',   delay: '0.5s' },
+  { label: 'Electronics Store',  sub: 'Leeds',          delay: '0.6s' },
+];
 /* ── Animated counter ── */
 function useCounter(target, duration = 1800, start = false) {
   const [count, setCount] = useState(0);
@@ -89,8 +90,10 @@ function ProjectCard({ label, sub, delay, isMobile }) {
         display: 'flex',
         alignItems: 'center',
         gap: isMobile ? 10 : 12,
-        minWidth: isMobile ? 155 : 'unset',
-        width: isMobile ? 'auto' : '100%',
+        minWidth: isMobile ? 170 : 'unset',
+width: isMobile ? '170px' : '100%',
+flexShrink: isMobile ? 0 : undefined,
+scrollSnapAlign: isMobile ? 'start' : undefined,
         boxShadow: isMobile ? '0 2px 14px rgba(0,0,0,0.06)' : '0 2px 20px rgba(0,0,0,0.07)',
         transition: 'border-color .3s, transform .3s',
         cursor: 'default',
@@ -204,8 +207,7 @@ export default function Hero() {
         background: '#ffffff',
         zIndex: 1,
         fontFamily: "'Cormorant Garamond', Georgia, serif",
-        marginBottom: 0,
-        paddingBottom: 0,
+        marginBottom: 0, // Remove any bottom margin
       }}
     >
       <style>{`
@@ -224,8 +226,22 @@ export default function Hero() {
         .cta-ghost { transition: color .2s, border-color .2s, transform .2s !important; }
         .cta-ghost:hover { color: rgba(0,0,0,.7) !important; border-color: rgba(234,88,12,.4) !important; transform: translateY(-2px) !important; }
 
-        .proj-scroll { display:flex; overflow-x:auto; gap:10px; padding-bottom:4px; scrollbar-width:none; -ms-overflow-style:none; }
-        .proj-scroll::-webkit-scrollbar { display:none; }
+        .proj-scroll {
+  display: flex;
+  flex-wrap: nowrap;            /* ✅ force single line */
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 6px;
+
+  scroll-snap-type: x mandatory;  /* ✅ smooth sliding */
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+
+.proj-scroll::-webkit-scrollbar {
+  display: none;
+}
 
         .hero-body {
           display: flex;
@@ -257,15 +273,6 @@ export default function Hero() {
           display: none !important;
         }
 
-        /* FIX: Remove fixed height on mobile to prevent gap */
-        @media (max-width: 1279px) {
-          #home {
-            height: auto !important;
-            min-height: auto !important;
-            max-height: none !important;
-          }
-        }
-
         @media (min-width: 1280px) {
           .hero-right          { display: flex !important; }
           .hero-mobile         { display: none !important; }
@@ -293,22 +300,22 @@ export default function Hero() {
             ))}
           </div>
           <div style={{ position:'absolute', inset:36, borderRadius:'50%', border:'1px solid rgba(0,0,0,0.05)', animation:'rotateSlow 20s linear infinite reverse' }} />
-          <div className="hero-ring" style={{ position:'absolute', inset:80, borderRadius:'50%', border:'1px dashed rgba(234,88,12,0.07)' }} />
+          <div style={{ position:'absolute', inset:80, borderRadius:'50%', border:'1px dashed rgba(234,88,12,0.07)' }} />
         </div>
       </div>
 
-      {/* OUTER PADDING WRAPPER */}
+      {/* OUTER PADDING WRAPPER - REDUCED PADDING BOTTOM TO REMOVE GAP */}
       <div style={{
         position: 'relative',
         zIndex: 20,
         paddingTop:    `calc(${navH}px + clamp(1.5rem, 4vh, 3rem))`,
-        paddingBottom: '0',
+        paddingBottom: '0', // REMOVED: was 'clamp(0.5rem, 2vh, 1rem)'
         paddingLeft:   'clamp(1.25rem, 5vw, 80px)',
         paddingRight:  'clamp(1.25rem, 4vw, 3rem)',
       }}>
 
         {/* ── TWO-COLUMN ROW ── */}
-        <div className="hero-body">
+       <div className="hero-body" style={{ alignItems: 'flex-start' }}>
 
           {/* ════════════ LEFT ════════════ */}
           <div className="hero-left">
