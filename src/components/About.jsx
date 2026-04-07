@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const sections = [
   {
@@ -24,16 +25,75 @@ const sections = [
   },
 ];
 
-export default function About() {
-  // FIX: removed useNavigate (was imported but never used, causing a lint warning)
-  // FIX: removed setMenuOpen reference in the contact button (was undefined, causing a runtime error)
+// Stats data for About page
+const aboutStats = [
+  { value: '500+',   label: 'Projects Delivered', suffix: '+' },
+  { value: '18',     label: 'Years Experience', suffix: '' },
+  { value: '98%',    label: 'Client Satisfaction', suffix: '%' },
+  { value: '£120M+', label: 'Value Fitted Out', suffix: 'M+' },
+  { value: '50+',    label: 'Expert Team Members', suffix: '+' },
+  { value: '25+',    label: 'Industry Awards', suffix: '+' },
+];
+
+// Animated counter hook
+function useCounter(target, duration = 2000, start = false) {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    if (!start) return;
+    
+    const num = parseInt(target.replace(/[^\d]/g, ''), 10);
+    if (!num) return;
+    
+    let current = 0;
+    const step = Math.ceil(num / (duration / 16));
+    const timer = setInterval(() => {
+      current = Math.min(current + step, num);
+      setCount(current);
+      if (current >= num) clearInterval(timer);
+    }, 16);
+    
+    return () => clearInterval(timer);
+  }, [start, target, duration]);
+  
+  return count;
+}
+
+// Stat item component - REDUCED SIZE
+function StatItem({ stat, index }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const num = parseInt(stat.value.replace(/[^\d]/g, ''), 10);
+  const prefix = stat.value.match(/^[^\d]*/)?.[0] ?? '';
+  const count = useCounter(stat.value, 2000, isVisible);
+  const display = num ? `${prefix}${count}${stat.suffix}` : stat.value;
 
   return (
-    <section id="about" className="bg-white mt-0 relative z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      onViewportEnter={() => setIsVisible(true)}
+      className="text-center px-2 md:px-4"
+    >
+      {/* REDUCED: text-2xl md:text-3xl instead of text-4xl md:text-5xl lg:text-6xl */}
+      <div className="text-1xl md:text-1xl font-bold text-orange-500 mb-0 font-serif">
+        {display}
+      </div>
+      {/* REDUCED: text-xs md:text-sm instead of text-sm md:text-base */}
+      <div className="text-xs md:text-sm text-gray-600 uppercase tracking-wider font-medium">
+        {stat.label}
+      </div>
+    </motion.div>
+  );
+}
 
-      {/* HERO */}
-      <div className="relative py-16 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white">
-
+export default function About() {
+  return (
+    <section id="about" className="bg-white relative z-10" style={{ marginTop: 0, paddingTop: 0 }}>
+      
+      {/* HERO - REDUCED PADDING */}
+      <div className="relative py-8 md:py-12 px-6 md:px-20 text-center bg-gradient-to-b from-gray-50 to-white" style={{ marginTop: 0 }}>
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,24 +103,35 @@ export default function About() {
           ABOUT <span className="text-orange-500">SHOPFITTING SOLUTIONS</span>
         </motion.h1>
 
-        <div className="w-20 h-1 bg-orange-500 mx-auto mt-6" />
+        <div className="w-20 h-1 bg-orange-500 mx-auto mt-4" />
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-gray-600 max-w-3xl mx-auto mt-6 text-lg leading-relaxed"
+          className="text-gray-600 max-w-3xl mx-auto mt-4 text-lg leading-relaxed"
         >
           We create premium retail environments that combine design, functionality, and quality execution.
           Our goal is to transform commercial spaces into modern, efficient, and visually engaging experiences.
         </motion.p>
+      </div>
 
+      {/* STATS SECTION - REDUCED SIZE */}
+      {/* REDUCED: py-8 md:py-10 instead of py-12 md:py-16 */}
+      <div className="py-8 md:py-10 bg-white border-y border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* REDUCED: gap-6 md:gap-3 instead of gap-8 md:gap-4 */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-3">
+            {aboutStats.map((stat, index) => (
+              <StatItem key={stat.label} stat={stat} index={index} />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* SECTIONS */}
       {sections.map((section, index) => (
         <div key={index} className="grid md:grid-cols-2">
-
           {/* IMAGE */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -111,9 +182,6 @@ export default function About() {
                     <li>• Scalable Solutions</li>
                   </ul>
 
-                  {/* FIX: removed onClick={() => setMenuOpen(false)} — setMenuOpen was
-                      undefined here. If you need to close a mobile menu on click,
-                      pass a closeMenu prop into this component and call it here. */}
                   <a
                     href="#contact"
                     className="border border-gray-400 px-6 py-2 text-sm tracking-wide hover:bg-orange-500 hover:text-white transition hover:scale-105 inline-block"
@@ -124,7 +192,6 @@ export default function About() {
               )}
             </div>
           </motion.div>
-
         </div>
       ))}
 

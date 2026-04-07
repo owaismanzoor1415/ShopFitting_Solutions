@@ -44,7 +44,7 @@ export default function Contact() {
             Contact Us
           </span>
 
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-4 mb-6 leading-tight">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-6 leading-tight">
             Let’s Build Your <br />
             <span className="text-orange-500">Next Retail Space</span>
           </h2>
